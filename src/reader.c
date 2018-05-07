@@ -1,15 +1,10 @@
-#include "structure.h"
+#include "notebook.h"
+#include "reader.h"
 
-
-typedef struct string
-{
-    int size;
-    char *string;
-}* String;
 
 /**
  * Le coisas de um array
- * 
+ * Passa linhas na estrutura String ao Notebook
  * 
 */
 void readfromFile(Notebook a, char *filepath){
