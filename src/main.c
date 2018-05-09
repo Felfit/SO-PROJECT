@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include "notebook.h"
+#include "reader.h"
 /*
 #define MAX_SIZE 1024
 
@@ -48,7 +51,7 @@ void readfromFile( char *filepath){ //notebook a
 */
 int main(int argc,char *argv[])
 {
-    //Notebook n = initNotebook();
+    Notebook n = initNotebook();
     //Ler do ficheiro para o documento
     //processDocument(Notebook n);
     //write docoment
@@ -58,7 +61,7 @@ int main(int argc,char *argv[])
 		return 0;
 	}
     //printf("ola");
-    //readfromFile(argv[1]);
+    readfromFile(n, argv[1]);
 
 return 0;
 }

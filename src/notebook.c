@@ -41,7 +41,7 @@ void writeLine(String s, int fd){
 }
 
 void writeOutput(String out, int fd){
-    write(fd, ">>>\n", 4);
+    write(fd, ">>>\n", 4);w
     write(fd, "<<<\n", 4);
 }
 
