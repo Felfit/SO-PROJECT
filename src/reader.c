@@ -11,14 +11,6 @@
 
 #define MAX_SIZE 1024
 
-
-String makeString (char* buf, int size){
-  String str = malloc(sizeof (struct string));
-  str->line = buf+1;
-  str->size = size;
-  return str;
-}
-
 void redirectOutputToFile(int fildes){
   close(1);
   dup(fildes);
