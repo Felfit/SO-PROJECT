@@ -4,6 +4,8 @@
 #include "reader.h"
 #include <unistd.h>
 
+#include "notebook.h"
+
 
 typedef struct notebook
 {
@@ -42,6 +44,8 @@ void writeLine(String s, int fd){
 
 void writeOutput(String out, int fd){
     write(fd, ">>>\n", 4);
+    write(fd, out->line, out->size);
+    write(fd, "\n", 1);
     write(fd, "<<<\n", 4);
 }
 
