@@ -1,5 +1,10 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 
 #include "notebook.h"
 #include "reader.h"
@@ -13,6 +18,12 @@ String makeString (char* buf, int size){
   str->line = buf;
   str->size = size;
   return str;
+}
+
+void redirectOutputToFile(int fildes){
+  close(1);
+  dup(fildes);
+  // ou usar a versao do dup2()
 }
 
 String readln(int fildes, int *n){
@@ -49,7 +60,7 @@ String readln(int fildes, int *n){
 
 void readfromFile(Notebook a, char *filepath){ //notebook a
   int fd, n=0;
-    if((fd = open(filepath, O_RDONLY, 0644)) > 0){
+    if((fd = open(filepath, O_RDWR, 0644)) > 0){
       while(n >= 0){
         String tmp = readln(fd, &n);
             if(tmp){
@@ -57,7 +68,9 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
               
               int j=0;
               while(tmp->line[j]!='\0'){
-                printf("%c",tmp->line[j]);
+                redirectOutputToFile(fd);
+                writeOutPut(tmp, fd);
+                
                 j++;
               
             }
