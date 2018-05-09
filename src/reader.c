@@ -11,14 +11,6 @@
 
 #define MAX_SIZE 1024
 
-
-String makeString (char* buf, int size){
-  String str = malloc(sizeof (struct string));
-  str->line = buf+1;
-  str->size = size;
-  return str;
-}
-
 void redirectOutputToFile(int fildes){
   close(1);
   dup(fildes);
@@ -28,33 +20,24 @@ void redirectOutputToFile(int fildes){
 String readln(int fildes, int *n){
 	int rd=1,i=0;
 	char c=' '; // ver se é preciso começar com ' '
-  char* buf = (char*)malloc(MAX_SIZE);
+  String str = malloc(sizeof( struct string));
+  str->line = (char*)malloc(MAX_SIZE);
 
     while(i<MAX_SIZE && rd>0 && c!='\n'){
       rd = read(fildes, &c, 1); // lê 1 para já
-        //filtrar o que não são comandos
-        if(i == 0 && c!= '$') {
-          if(rd <= 0) *n = -1;
-          return NULL;
-        }
-        //passar para o buffer os caracteres ddo comando
-        else{
           if (rd && c!='\n'){
-            if(c == '$') i++;
-            //if(i == 0) i++; // não funciona por algum motivo
-            *(buf + i) = c;}
-          }
+            str->line[i] = c;}
         i++;
     }
 
     if(i == 0) return NULL; //ver este caso
     if(rd<=0) *n = -1;
     else{
-      *(buf + i) = '\0'; // não é preciso, visto que temos size, mas deixo para já.
+      str->line[i-1] = '\0';
       *n = i;
     }
-  String result = makeString(buf, i);
-  return result;
+  str->size = i;
+  return str;
 }
 
 void readfromFile(Notebook a, char *filepath){ //notebook a
@@ -64,7 +47,7 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
         String tmp = readln(fd, &n);
             if(tmp){
               //mete no notebook
-              
+
               int j=0;
               while(tmp->line[j]!='\0'){
                 redirectOutputToFile(fd);
