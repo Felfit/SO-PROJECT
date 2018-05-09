@@ -5,6 +5,7 @@
 
 #include "reader.h"
 #include "notebook.h"
+#include "command.h"
 /*
 #define MAX_SIZE 1024
 
@@ -87,7 +88,14 @@ int main(int argc,char *argv[])
 		return 0;
 	}
     //printf("ola");
-    readfromFile(n, argv[1]);
-
+    //readfromFile(n, argv[1]);
+    
+    /*char *command = "$ls -la";
+    Command cmd = commandDecoder(command);
+    printf("%s\n", cmd->command );
+    char* la[100];
+    la[0] = "-la"; la[1] = NULL;
+    execvp(cmd->command, (char* const*)la);
+  */
 return 0;
 }

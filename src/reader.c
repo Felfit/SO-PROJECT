@@ -69,13 +69,11 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
               while(tmp->line[j]!='\0'){
                 redirectOutputToFile(fd);
                 writeOutput(tmp, fd);
-                
                 j++;
-              
+              }
             }
       }
     }
-  }
     else perror("Can't open this file!");
   close(fd);
 }

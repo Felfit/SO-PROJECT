@@ -1,3 +1,7 @@
+#ifndef __DYNAMIC_ARRAYS_H__
+#define __DYNAMIC_ARRAYS_H__
+
+
 typedef struct dynamicArray
 {
     void* values;
@@ -8,3 +12,5 @@ DynArray initDynArray();
 void append(DynArray a, void *value);
 void insert(DynArray a, int index, void *value);
 void* index(DynArray a, int index);
+
+#endif
