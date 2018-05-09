@@ -5,8 +5,7 @@
 
 String makeString (char* buf, int size){
   String str = malloc(sizeof (struct string));
-  str->line = (char*) malloc(size+1);
-  str->line = buf;
+  str->line = buf+1;
   str->size = size;
   return str;
 }
