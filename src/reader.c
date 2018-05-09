@@ -33,7 +33,7 @@ String readln(int fildes, int *n){
     if(i == 0) return NULL; //ver este caso
     if(rd<=0) *n = -1;
     else{
-      str->line[i] = '\0';
+      str->line[i-1] = '\0';
       *n = i;
     }
   str->size = i;
