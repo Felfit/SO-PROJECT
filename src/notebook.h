@@ -1,7 +1,11 @@
 #ifndef __NOTEBOOK_H__
 #define __NOTEBOOK_H__
 
-#include "reader.h"
+typedef struct string
+{
+    int size;
+    char *line;
+}* String;
 
 typedef struct notebook *Notebook;
 

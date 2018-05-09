@@ -4,6 +4,8 @@
 #include "reader.h"
 #include <unistd.h>
 
+#include "notebook.h"
+
 
 typedef struct notebook
 {

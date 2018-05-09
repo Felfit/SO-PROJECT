@@ -40,8 +40,8 @@ String readln(int fildes, int *n){
         }
         //passar para o buffer os caracteres ddo comando
         else{
-          if (rd && c!="\n"){
-            if(c == "$") i++;
+          if (rd && c!='\n'){
+            if(c == '$') i++;
             //if(i == 0) i++; // não funciona por algum motivo
             *(buf + i) = c;}
           }
@@ -69,7 +69,7 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
               int j=0;
               while(tmp->line[j]!='\0'){
                 redirectOutputToFile(fd);
-                writeOutPut(tmp, fd);
+                writeOutput(tmp, fd);
                 
                 j++;
               

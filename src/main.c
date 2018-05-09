@@ -4,6 +4,7 @@
 #include <fcntl.h>
 
 #include "reader.h"
+#include "notebook.h"
 /*
 #define MAX_SIZE 1024
 
