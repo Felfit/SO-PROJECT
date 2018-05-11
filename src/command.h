@@ -1,14 +1,16 @@
-#ifndef __DYNAMIC_ARRAYS_H__
-#define __DYNAMIC_ARRAYS_H__
+#ifndef __COMMAND_H__
+#define __COMMAND_H__
+
+#include "dynArrays.h"
 
 typedef struct command
 {
     char *command;
-    char **args;
+    DynArray args;
 }* Command;
-
 
 char *execute(Command comando, char *input);
 Command commandDecoder(char* command);
+void printCommandArgs(Command command);
 
 #endif

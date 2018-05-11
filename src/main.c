@@ -73,10 +73,12 @@ int main(int argc,char *argv[])
     //printf("ola");
     //readfromFile(n, argv[1]);
     
-    /*char *command = "$ls -la";
+    char *command = "$ls -la";
     Command cmd = commandDecoder(command);
     printf("%s\n", cmd->command );
-    char* la[100];
+    printCommandArgs(cmd);
+    execute(cmd, "odiaj");
+  /*  char* la[100];
     la[0] = "-la"; la[1] = NULL;
     execvp(cmd->command, (char* const*)la);
   */

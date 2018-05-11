@@ -11,6 +11,6 @@ typedef struct dynamicArray
 DynArray initDynArray();
 void append(DynArray a, void *value);
 void insert(DynArray a, int index, void *value);
-void* index(DynArray a, int index);
+void* dyn_index(DynArray a, int index);
 
 #endif
