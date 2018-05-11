@@ -2,11 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 
-#include "reader.h"
-#include "notebook.h"
-/*
-#define MAX_SIZE 1024
+#define MAX_SIZE 1
 
 typedef struct string
 {
@@ -19,12 +17,16 @@ String readln(int fildes, int *n, int size){
 	char c=' '; // ver se é preciso começar com ' '
   String str = malloc(sizeof( struct string));
   str->line = (char*)malloc(MAX_SIZE);
-
+  int count=1;
     while(i<size && rd>0 && c!='\n'){
       rd = read(fildes, &c, 1); // lê 1 para já
           if (rd && c!="\n"){
-            str->line[i] = c;}
+            str->line[i] = c;
+              if(strlen(str->line)==MAX_SIZE)
+              str->line = realloc(str->line, +1);
+            }
         i++;
+        count++;
     }
 
     if(i == 0) return NULL; //ver este caso
@@ -56,11 +58,11 @@ void readfromFile( char *filepath){ //notebook a
     else perror("Can't open this file!");
   close(fd);
 }
-*/
+
 
 int main(int argc,char *argv[])
 {
-    Notebook n = initNotebook();
+    //Notebook n = initNotebook();
     //Ler do ficheiro para o documento
     //processDocument(Notebook n);
     //write docoment
@@ -69,8 +71,7 @@ int main(int argc,char *argv[])
 		fprintf(stderr,"Use ./program <dumb_path>\n");
 		return 0;
 	}
-    //printf("ola");
-    readfromFile(n, argv[1]);
+    readfromFile(argv[1]);
 
 return 0;
 }
