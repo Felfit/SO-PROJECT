@@ -10,12 +10,12 @@
 #include "reader.h"
 
 #define MAX_SIZE 1024
-
+/*
 void redirectOutputToFile(int fildes){
   close(1);
   dup(fildes);
   // ou usar a versao do dup2()
-}
+}*/
 
 String readln(int fildes, int *n){
 	int rd=1,i=0;
@@ -33,7 +33,7 @@ String readln(int fildes, int *n){
     if(i == 0) return NULL; //ver este caso
     if(rd<=0) *n = -1;
     else{
-      str->line[i-1] = '\0';
+      str->line[i-1] = '\0'; //para ir sem "\n"
       *n = i;
     }
   str->size = i;
@@ -47,12 +47,11 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
         String tmp = readln(fd, &n);
             if(tmp){
               //mete no notebook
-
-              int j=0;
-              while(tmp->line[j]!='\0'){
-                redirectOutputToFile(fd);
-                writeOutput(tmp, fd);
-
+              insertLine(a,tmp);
+              //int j=0;
+              //while(tmp->line[j]!='\0'){
+                //redirectOutputToFile(fd);
+                //writeOutput(tmp, fd);
                 j++;
 
             }
