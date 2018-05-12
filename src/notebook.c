@@ -55,7 +55,7 @@ void writeDocument(Notebook x,char* filepath){
     int i,cacc = i = 0;
     for(i = 0;i < length;i++)
     {
-        String s = index(x->lines,i);
+        String s = dyn_index(x->lines,i);
         writeLine(s,fd);
         if(s->line[0]=='$'){
             writeOutput(s,fd);

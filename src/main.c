@@ -4,7 +4,15 @@
 #include <fcntl.h>
 #include <string.h>
 
+<<<<<<< HEAD
 #define MAX_SIZE 1
+=======
+#include "reader.h"
+#include "notebook.h"
+#include "command.h"
+/*
+#define MAX_SIZE 1024
+>>>>>>> 6da8c500f54acca3c71f562b597b42a84168d378
 
 typedef struct string
 {
@@ -71,7 +79,22 @@ int main(int argc,char *argv[])
 		fprintf(stderr,"Use ./program <dumb_path>\n");
 		return 0;
 	}
+<<<<<<< HEAD
     readfromFile(argv[1]);
 
+=======
+    //printf("ola");
+    //readfromFile(n, argv[1]);
+    
+    char *command = "$ls -la";
+    Command cmd = commandDecoder(command);
+    printf("%s\n", cmd->command );
+    printCommandArgs(cmd);
+    execute(cmd, "odiaj");
+  /*  char* la[100];
+    la[0] = "-la"; la[1] = NULL;
+    execvp(cmd->command, (char* const*)la);
+  */
+>>>>>>> 6da8c500f54acca3c71f562b597b42a84168d378
 return 0;
 }

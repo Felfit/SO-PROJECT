@@ -9,7 +9,7 @@ typedef struct realDynArray
     int size;
 }* RealDynArray;
 
-void* index(DynArray a, int index){
+void* dyn_index(DynArray a, int index){
     RealDynArray x = (RealDynArray) a;
     void* result = x->values[index];
     return result;

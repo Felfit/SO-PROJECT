@@ -25,7 +25,7 @@ String readln(int fildes, int *n){
 
     while(i<MAX_SIZE && rd>0 && c!='\n'){
       rd = read(fildes, &c, 1); // lê 1 para já
-          if (rd && c!="\n"){
+          if (rd && c!='\n'){
             str->line[i] = c;}
         i++;
     }
@@ -47,17 +47,24 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
         String tmp = readln(fd, &n);
             if(tmp){
               //mete no notebook
+<<<<<<< HEAD
               insertLine(a,tmp);
               //int j=0;
               //while(tmp->line[j]!='\0'){
                 //redirectOutputToFile(fd);
                 //writeOutput(tmp, fd);
-                j++;
+=======
 
+              int j=0;
+              while(tmp->line[j]!='\0'){
+                redirectOutputToFile(fd);
+                writeOutput(tmp, fd);
+>>>>>>> 6da8c500f54acca3c71f562b597b42a84168d378
+                j++;
+              }
             }
       }
     }
-  }
     else perror("Can't open this file!");
   close(fd);
 }
