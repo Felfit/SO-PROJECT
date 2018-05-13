@@ -47,19 +47,10 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
         String tmp = readln(fd, &n);
             if(tmp){
               //mete no notebook
-<<<<<<< HEAD
-              insertLine(a,tmp);
-              //int j=0;
-              //while(tmp->line[j]!='\0'){
-                //redirectOutputToFile(fd);
-                //writeOutput(tmp, fd);
-=======
 
               int j=0;
               while(tmp->line[j]!='\0'){
-                redirectOutputToFile(fd);
                 writeOutput(tmp, fd);
->>>>>>> 6da8c500f54acca3c71f562b597b42a84168d378
                 j++;
               }
             }

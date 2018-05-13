@@ -1,0 +1,8 @@
+CC=gcc
+CFLAGS= -g
+OBJECTS= main.c dynArrays.c  reader.c notebook.c command.c 
+LYBRARIES= reader.h dynArrays.h notebook.h command.h  
+
+
+notebook:
+	#gcc -g  main.c reader.c notebook.c dynArrays.c command.c
