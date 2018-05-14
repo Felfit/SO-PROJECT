@@ -9,6 +9,8 @@ typedef struct command
     DynArray args;
 }* Command;
 
+void redirectOutPut();
+char *getInput(int fildes);
 char *execute(Command comando, char *input);
 Command commandDecoder(char* command);
 void printCommandArgs(Command command);

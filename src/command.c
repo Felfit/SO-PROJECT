@@ -3,8 +3,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define MAX_BUFF 1024
+
+/**
+ * Redericiona o output para o ficheiro output.txt
+ * O conteúdo do ficheiro output.txt é apagado ao chamar esta funcao
+ * FUNCAO USADA PARA TESTES E A SUA IMPLEMENTACAO ESTA A SER PONDERADA
+*/
+void redirectOutPut(){
+	// atencao, sempre que abre o ficheiro, apaga tudo o que lá estava (O_TRUNC)
+	int fd = open("output.txt", O_RDWR | O_CREAT | O_TRUNC , 0666);
+	close(1);
+	dup(fd);
+	close(fd);
+}
+
+
+/**
+ * Devolve o input da ultima instrução
+ * @param fildes O ficheiro onde se encontra o input
+ * @return a string com o input, NULLED terminated
+*/
+char *getInput(int fildes){
+	int rd = 1;
+	char buffer[MAX_BUFF], *input = NULL;
+	rd = read(fildes, buffer, MAX_BUFF - 1);
+
+	if(rd == MAX_BUFF - 1) write(3, "Input wasn't read proporly\n", 27);
+	if(rd > 0){
+		buffer[rd - 1] = '\0';
+		input = malloc(rd + 1);
+		strcpy(input, buffer);
+	}
+	return input;
+}
 
 /**
  * Executa um comando e retorna o input
