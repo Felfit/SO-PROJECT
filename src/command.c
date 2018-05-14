@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "notebook.h"
+#include <sys/wait.h>
 
 #define MAX_BUFF 1024
 
@@ -79,6 +80,20 @@ String collectOutput(int fd){
 	return res;
 }
 
+int checkForErrors(int pid, int stderr){
+	int out;
+	char c;
+	if(read(stderr,&c,1)>0)
+		return 1;
+	wait(&out);
+	return out;
+}
+
+void closePipe(int p[2]){
+	close(p[0]);
+	close(p[1]);
+}
+
 /**
  * Executa um comando e retorna o input
  * Não altera o input do programa pai
@@ -89,19 +104,26 @@ String collectOutput(int fd){
 String execute(Command comando, String input){
 	//To Do redirecionar o stderror e matar programa se algo acontecer
 	int w[2], r[2], e[2];
-	pipe(w); pipe(r);
-	if(!fork()){
-		close(w[1]);//vai ler deste pipe
-		close(r[0]);//vai escrever para o este pipe
-		dup2(r[1], 1);
-		close(r[1]);
-		dup2(w[0], 0);
-		close(w[0]);
+	pipe(w); pipe(r); pipe(e);
+	int pid = fork();
+	if (!pid)
+	{
+		dup2(r[1], 1);//vai escrever para este
+		dup2(e[1],2);//vai mandar erros para este
+		dup2(w[0], 0);//vai ler para este
+		closePipe(r);
+		closePipe(w);
+		closePipe(e);
 		execvp(comando->command, (char* const*) comando->args->values);
-		exit(0);
+		exit(1);
 	}
-	close(w[0]); //vai escrever deste pipe
-	close(r[1]); //vai ler para o este pipe
+	close(w[0]); //pai nao le deste pipe
+	close(e[1]); //pai nao escreve neste pipe
+	close(r[1]); //pai nao escreve neste pipe
+	if(checkForErrors(pid,e[0])){
+		printf("Comando crashou");
+		exit(-1);
+	}
 	feedInput(w[1],input);
 	String output = collectOutput(r[0]);
 	return output;
