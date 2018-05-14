@@ -3,36 +3,26 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #include "reader.h"
 #include "notebook.h"
 #include "command.h"
 
-#define MAX_SIZE 1024
+#define MAX_SIZE 4096
 
 int main(int argc,char *argv[])
 {
-    //Ler do ficheiro para o documento
-    //processDocument(Notebook n);
-    //write docoment
-    /*
     if(argc < 2){
 		  fprintf(stderr,"Use ./program <dumb_path>\n");
 		  return -1;
-	  }*/
+	  }
   
     /*
     Notebook n = initNotebook();
-    String s = malloc(sizeof(struct string));
-    s->line = malloc(10);
-    strcpy(s->line,"$ls aaa");
-    s->size = 10;
-    insertLine(n, s);
+    readfromFile(n,argv[1]);
     executeCommands(n);
     writeNotebook(n,"None");
+    writeNotebook(n,"test.txt");
     */
     
     char* command = "$ls -l -la";
@@ -42,5 +32,4 @@ int main(int argc,char *argv[])
     printCommandArgs(cmd);
     
     return 0;
-
 }

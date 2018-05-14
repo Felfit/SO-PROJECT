@@ -4,58 +4,53 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
+#include <string.h>
 
 #include "notebook.h"
 #include "reader.h"
 
-#define MAX_SIZE 1024
-/*
-void redirectOutputToFile(int fildes){
-  close(1);
-  dup(fildes);
-  // ou usar a versao do dup2()
-}*/
+#define MAX_SIZE 4096
 
-String readln(int fildes, int *n){
-  int rd=1,i=0;
-  char c=' '; // ver se é preciso começar com ' '
+String makeStr (char* buf, int c){
   String str = malloc(sizeof( struct string));
-  str->line = (char*)malloc(MAX_SIZE);
-
-    while(i<MAX_SIZE && rd>0 && c!='\n'){
-      rd = read(fildes, &c, 1); // lê 1 para já
-          if (rd && c!='\n'){
-            str->line[i] = c;}
-        i++;
-    }
-
-    if(i == 0) return NULL; //ver este caso
-    if(rd<=0) *n = -1;
-    else{
-      str->line[i-1] = '\0'; //para ir sem "\n"
-      *n = i;
-    }
-  str->size = i;
+  str->line = (char*)malloc(c);
+  memcpy(str->line, buf, c);
+  str->line[c] = '\0';
+  str->size = c;
   return str;
 }
 
-void readfromFile(Notebook a, char *filepath){ //notebook a
-  int fd, n=0;
-    if((fd = open(filepath, O_RDWR, 0644)) > 0){
-      while(n >= 0){
-        String tmp = readln(fd, &n);
-            if(tmp){
-              //mete no notebook
-
-              int j=0;
-              while(tmp->line[j]!='\0'){
-                //writeOutput(tmp, fd);
-                j++;
-              }
-            }
-      }
+void filterBuffer(Notebook a, char* buff){
+  int i=0,count=0;
+  while(buff[i] != '\0'){
+    if(buff[i] == '>'){
+      while(buff[i] != '<')
+        i++;
+      i+=5;
     }
+    if(buff[i] == '\n'){
+      String res = makeStr(buff + i- count, count);
+      insertLine(a, res);
+      count = 0 ;
+      i++;
+    }
+    count++;
+    i++;
+  }
+}
+
+
+void readfromFile(Notebook a, char *filepath){ //notebook a
+  int fd, count=0, rd=1;
+  char* buff = (char*)malloc(MAX_SIZE);
+    if((fd = open(filepath, O_RDONLY, 0644)) > 0){
+        while(rd>0){
+          rd = read(fd, buff, 4096);
+          count+= rd;
+        }
+        *(buff + count) = '\0';
+        filterBuffer(a, buff);
+			}
     else perror("Can't open this file!");
   close(fd);
 }

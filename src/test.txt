@@ -1,0 +1,5 @@
+ARIGATO
+$ more randomNames.txt
+Random Shit in between
+$|sort
+WOOOH

@@ -6,6 +6,7 @@
 #include <string.h>
 #include "notebook.h"
 #include "command.h"
+#include <fcntl.h>
 
 typedef struct notebook
 {
@@ -24,10 +25,8 @@ void insertLine(Notebook x, String l){
         return;
     char * line = l->line;
     if(line[0] == '$'){
-        //Command c - Interpertador de comandos
         Command c = commandDecoder(line);
         append(x->commands,c);
-        printf("There Should Be a Command\n");
     }
     append(x->lines,l);
     return;
@@ -74,7 +73,21 @@ void executeCommands(Notebook x){
     for(i = 0;i < length;i++)
     {
         Command c = dyn_index(x->commands,i);
-        String out = execute(c,NULL);
+        int input = c->inoffset;
+        String out;
+        if (input==0){
+            out = execute(c,NULL);
+        }
+        else if(input>i)
+        {
+            printf("Error 1\n");
+            exit(-1);
+        }
+        else
+        {
+            String in = dyn_index(x->outputs, i-input);
+            out = execute(c, in);
+        }
         append(x->outputs,out);
     }
 }
@@ -86,20 +99,19 @@ void writeLine(String s, int fd){
 
 void writeOutput(String out, int fd){
     write(fd, ">>>\n", 4);
-    write(fd, out->line, out->size);
-    write(fd, "\n", 1);
+    write(fd, out->line, out->size-1);
     write(fd, "<<<\n", 4);
 }
 
 void writeNotebook(Notebook x,char* filepath){
-    int fd = 1; // open(filepath,O_WRITE);
+    int fd = open(filepath,O_WRONLY | O_CREAT,0644);
     int length = getNumberLines(x);
     int i,cacc = 0;
     for(i = 0;i < length;i++)
     {
         String s = dyn_index(x->lines,i);
         writeLine(s,fd);
-        if(s ){
+        if(s && s->line[0] == '$'){
             String out = dyn_index(x->outputs,cacc);
             if(out)
                 writeOutput(out,fd);

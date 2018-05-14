@@ -41,6 +41,7 @@ String create_String_sized(int size){
 	String res = malloc(sizeof(struct string));
 	res->line = malloc(size);
 	res->size = size;
+	return res;
 }
 
 String collectOutput(int fd){
@@ -69,9 +70,10 @@ String collectOutput(int fd){
 
 int checkForErrors(int pid, int stderr){
 	int out;
-	char c;
-	if(read(stderr,&c,1)>0)
+	String err = collectOutput(stderr);
+	if(err->size > 1){
 		return 1;
+	}
 	wait(&out);
 	return out;
 }
@@ -107,11 +109,11 @@ String execute(Command comando, String input){
 	close(w[0]); //pai nao le deste pipe
 	close(e[1]); //pai nao escreve neste pipe
 	close(r[1]); //pai nao escreve neste pipe
+	feedInput(w[1],input);
 	if(checkForErrors(pid,e[0])){
 		printf("Comando crashou");
 		exit(-1);
 	}
-	feedInput(w[1],input);
 	String output = collectOutput(r[0]);
 	return output;
 }
