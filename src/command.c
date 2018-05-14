@@ -164,7 +164,7 @@ int filterCmd(Command comando, char* command){
 	if(command[i] == '$') i++;
 	while(command[i] == ' ') i++;
 
-	for(j = 0; command[i] != '\0'; j++, i++){
+	for(j = 0; command[i] != '\0' && command[i] != ' '; j++, i++){
 		buffer[j] = command[i];
 		if(command[i] == '|'){
 			comando->inoffset = getInOffSet(command, i);
