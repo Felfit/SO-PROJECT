@@ -21,14 +21,14 @@ int main(int argc,char *argv[])
     /*
     if(argc < 2){
 		  fprintf(stderr,"Use ./program <dumb_path>\n");
-		  return 0;
+		  return -1;
 	  }*/
   
     Notebook n = initNotebook();
     String s = malloc(sizeof(struct string));
-    s->line = malloc(4);
-    strcpy(s->line,"$ls");
-    s->size = 4;
+    s->line = malloc(10);
+    strcpy(s->line,"$ls aaa");
+    s->size = 10;
     insertLine(n, s);
     executeCommands(n);
     writeNotebook(n,"None");
