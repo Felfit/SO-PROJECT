@@ -29,7 +29,7 @@ void insertLine(Notebook x, String l){
         append(x->commands,c);
         printf("There Should Be a Command\n");
     }
-    append(x->lines,line);
+    append(x->lines,l);
     return;
 }
 
@@ -75,7 +75,6 @@ void executeCommands(Notebook x){
     {
         Command c = dyn_index(x->commands,i);
         String out = execute(c,NULL);
-        printf("out : %s",out->line);
         append(x->outputs,out);
     }
 }

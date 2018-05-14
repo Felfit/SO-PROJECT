@@ -25,9 +25,9 @@ int main(int argc,char *argv[])
 	  }*/
     Notebook n = initNotebook();
     String s = malloc(sizeof(struct string));
-    s->line = malloc(5);
+    s->line = malloc(4);
     strcpy(s->line,"$ls");
-    s->size = 3;
+    s->size = 4;
     insertLine(n, s);
     executeCommands(n);
     writeNotebook(n,"None");
