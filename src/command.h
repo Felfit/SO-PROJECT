@@ -11,7 +11,7 @@ typedef struct command
     DynArray args;
 }* Command;
 
-int getInOffSet(char* command, int max);
+int getInOffSet(char* command, int *i);
 char *getInput(int fildes);
 String execute(Command comando, String input);
 Command commandDecoder(char* command);

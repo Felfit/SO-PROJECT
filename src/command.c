@@ -9,6 +9,7 @@
 #include <string.h>
 #include "notebook.h"
 #include <sys/wait.h>
+#include <math.h>
 
 #define MAX_BUFF 1024
 
@@ -118,62 +119,45 @@ String execute(Command comando, String input){
 	return output;
 }
 
+
+int getInOffSet(char* command, int *i){
+	//char inoffset[MAX_BUFF];
+	int j = 0, inoffset;
+	int scanned = sscanf(command + (*i), "%d|", &inoffset);
+	if(scanned){
+		(*i) += (int) log10(inoffset) + 1;
+		return inoffset;
+	}
+	else return 0;
+
 /*
-void strrev(char* string, int tam){
-	char tmp;
-	for(int i = 0; i < tam/2 ; tam--, i++){
-		tmp = string[i];
-		string[i] = string[tam-1];
-		string[tam-1] = tmp; 
-	}
-}
-
-int getInOffSet(char* command, int i){
-	char inoffset[100];
-	int j = 0;
-	i--;
-	while( i > 0 && command[i] == ' ') i--;
-	while( i > 0 && command[i] >= '0' && command[i] <= '9'){
-		inoffset[j++] = command[i--];
-	}
+	while(command[*i] != '\0' && command[*i] >= '0' && command[*i] <= '9')
+		inoffset[j++] = command[(*i)++];
 	if(j){
 		inoffset[j] = '\0';
-		strrev(inoffset, j);
-		return atoi(inoffset);
-	}
-	else return 1; // caso em que não encontrou o inOffSet
-}
-*/
-
-int getInOffSet(char* command, int max){
-	int i, j;
-	i = j = 0;
-	char inoffset[100];
-	while(i < max && (command[i] < '0' || command[i] > '9')) i++;
-	while(i < max && command[i] >= '0' && command[i] <= '9')
-		inoffset[j++] = command[i++];
-	if(j){
-		inoffset[j] = '\0';
+		(*i)++;
 		return atoi(inoffset);
 	}
 	else return 1;
+*/
 }
-
 
 int filterCmd(Command comando, char* command){
 	char buffer[MAX_BUFF];
 	int j, i = 0;
 	if(command[i] == '$') i++;
 	while(command[i] == ' ') i++;
-
+	if(command[i] == '|') {
+		comando->inoffset = 1;
+		i++;
+	}
+	else comando->inoffset = getInOffSet(command, &i);
+	
+	while(command[i] == ' ' || command[i] == '|') i++;
 	for(j = 0; command[i] != '\0' && command[i] != ' '; j++, i++){
 		buffer[j] = command[i];
-		if(command[i] == '|'){
-			comando->inoffset = getInOffSet(command, i);
-			// é -1 porque vai ser incrementado de seguida
-			j = -1;
-		}
 	}
+
 	buffer[j++] = '\0';
 	char *cmdString = malloc(j);
 	strcpy(cmdString, buffer);

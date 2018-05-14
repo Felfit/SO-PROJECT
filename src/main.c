@@ -25,7 +25,7 @@ int main(int argc,char *argv[])
     writeNotebook(n,"test.txt");
     */
     
-    char* command = "$ls -l -la";
+    char* command = "$ 23 | ls -l -la";
     Command cmd = commandDecoder(command);
     printf("offset: %d\n", cmd->inoffset);
     printf("command: %s\n", cmd->command);
