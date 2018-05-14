@@ -94,13 +94,12 @@ void executeCommands(Notebook x){
 
 void writeLine(String s, int fd){
     write(fd,s->line,s->size);
-    write(fd,"\n",1);
 }
 
 void writeOutput(String out, int fd){
-    write(fd, ">>>\n", 4);
+    write(fd, "\n>>>\n", 5);
     write(fd, out->line, out->size-1);
-    write(fd, "<<<\n", 4);
+    write(fd, "<<<", 3);
 }
 
 void writeNotebook(Notebook x,char* filepath){
@@ -117,6 +116,8 @@ void writeNotebook(Notebook x,char* filepath){
                 writeOutput(out,fd);
             cacc++;
         }
+        if(i<length-1)
+            write(fd, "\n", 1);
     }
 }
 

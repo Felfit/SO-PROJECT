@@ -22,13 +22,13 @@ String makeStr (char* buf, int c){
 
 void filterBuffer(Notebook a, char* buff){
   int i=0,count=0;
-  while(buff[i] != '\0'){
+  while(i == 0 || buff[i-1] != '\0'){
     if(buff[i] == '>'){
       while(buff[i] != '<')
         i++;
       i+=5;
     }
-    if(buff[i] == '\n'){
+    if(buff[i] == '\n' || buff[i] == '\0'){
       String res = makeStr(buff + i- count, count);
       insertLine(a, res);
       count = 0 ;

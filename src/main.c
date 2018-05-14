@@ -17,19 +17,19 @@ int main(int argc,char *argv[])
 		  return -1;
 	  }
   
-    /*
+    
     Notebook n = initNotebook();
     readfromFile(n,argv[1]);
     executeCommands(n);
     writeNotebook(n,"None");
     writeNotebook(n,"test.txt");
-    */
+    /*
     
     char* command = "$ls -l -la";
     Command cmd = commandDecoder(command);
     printf("offset: %d\n", cmd->inoffset);
     printf("command: %s\n", cmd->command);
     printCommandArgs(cmd);
-    
+    */
     return 0;
 }
