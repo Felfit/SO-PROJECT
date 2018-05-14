@@ -6,23 +6,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 #include "notebook.h"
 
 #define MAX_BUFF 1024
-
-/**
- * Redericiona o output para o ficheiro output.txt
- * O conteúdo do ficheiro output.txt é apagado ao chamar esta funcao
- * FUNCAO USADA PARA TESTES E A SUA IMPLEMENTACAO ESTA A SER PONDERADA
-*/
-void redirectOutPut(){
-	// atencao, sempre que abre o ficheiro, apaga tudo o que lá estava (O_TRUNC)
-	int fd = open("output.txt", O_RDWR | O_CREAT | O_TRUNC , 0666);
-	close(1);
-	dup(fd);
-	close(fd);
-}
-
 
 /**
  * Devolve o input da ultima instrução
@@ -107,13 +94,61 @@ String execute(Command comando, String input){
 	return output;
 }
 
+/*
+void strrev(char* string, int tam){
+	char tmp;
+	for(int i = 0; i < tam/2 ; tam--, i++){
+		tmp = string[i];
+		string[i] = string[tam-1];
+		string[tam-1] = tmp; 
+	}
+}
+
+int getInOffSet(char* command, int i){
+	char inoffset[100];
+	int j = 0;
+	i--;
+	while( i > 0 && command[i] == ' ') i--;
+	while( i > 0 && command[i] >= '0' && command[i] <= '9'){
+		inoffset[j++] = command[i--];
+	}
+	if(j){
+		inoffset[j] = '\0';
+		strrev(inoffset, j);
+		return atoi(inoffset);
+	}
+	else return 1; // caso em que não encontrou o inOffSet
+}
+*/
+
+int getInOffSet(char* command, int max){
+	int i, j;
+	i = j = 0;
+	char inoffset[100];
+	while(i < max && (command[i] < '0' || command[i] > '9')) i++;
+	while(i < max && command[i] >= '0' && command[i] <= '9')
+		inoffset[j++] = command[i++];
+	if(j){
+		inoffset[j] = '\0';
+		return atoi(inoffset);
+	}
+	else return 1;
+}
+
 
 int filterCmd(Command comando, char* command){
 	char buffer[MAX_BUFF];
 	int j, i = 0;
 	if(command[i] == '$') i++;
-	for(j = 0; command[i] != '\0' && command[i] != ' '; j++, i++){
+	while(command[i] == ' ') i++;
+
+	for(j = 0; command[i] != '\0'; j++, i++){
 		buffer[j] = command[i];
+		if(command[i] == '|'){
+			comando->inoffset = getInOffSet(command, i);
+			// é -1 porque vai ser incrementado de seguida
+			j = -1;
+		}
 	}
 	buffer[j++] = '\0';
 	char *cmdString = malloc(j);
@@ -150,7 +185,7 @@ Command commandDecoder(char* command){
 
 	Command cmd = malloc(sizeof(struct command));
 	cmd->args = initDynArray();
-
+	cmd->inoffset = 0;
 	int i = filterCmd(cmd, command);
 	//Isto é preciso visto que o execvp ignora o primeiro elemento do array
 	// porque pensa que é o nome do comando, logo, pus o nome do comando, mas é indiferente
@@ -164,5 +199,5 @@ Command commandDecoder(char* command){
 
 void printCommandArgs(Command cmd){
 	for(int i = 1; i < cmd->args->len - 1; i++)
-      printf("%s\n", (char*) dyn_index(cmd->args, i));
+      printf("Args: %s\n", (char*) dyn_index(cmd->args, i));
 }

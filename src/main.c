@@ -23,6 +23,7 @@ int main(int argc,char *argv[])
 		  fprintf(stderr,"Use ./program <dumb_path>\n");
 		  return 0;
 	  }*/
+  
     Notebook n = initNotebook();
     String s = malloc(sizeof(struct string));
     s->line = malloc(4);
@@ -31,5 +32,15 @@ int main(int argc,char *argv[])
     insertLine(n, s);
     executeCommands(n);
     writeNotebook(n,"None");
+    
+    /*
+    char* command = "$23|ls";
+    Command cmd = commandDecoder(command);
+    printf("offset: %d\n", cmd->inoffset);
+    printf("command: %s\n", cmd->command);
+    printCommandArgs(cmd);
+    */
+
     return 0;
+
 }
