@@ -6,22 +6,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
+#include "notebook.h"
+#include <sys/wait.h>
 
 #define MAX_BUFF 1024
-
-/**
- * Redericiona o output para o ficheiro output.txt
- * O conteúdo do ficheiro output.txt é apagado ao chamar esta funcao
- * FUNCAO USADA PARA TESTES E A SUA IMPLEMENTACAO ESTA A SER PONDERADA
-*/
-void redirectOutPut(){
-	// atencao, sempre que abre o ficheiro, apaga tudo o que lá estava (O_TRUNC)
-	int fd = open("output.txt", O_RDWR | O_CREAT | O_TRUNC , 0666);
-	close(1);
-	dup(fd);
-	close(fd);
-}
-
 
 /**
  * Devolve o input da ultima instrução
@@ -42,6 +31,56 @@ char *getInput(int fildes){
 	return input;
 }
 
+void feedInput(int fd, String input){
+	if(input)
+		write(fd,input->line,input->size);
+	close(fd);
+}
+
+String create_String_sized(int size){
+	String res = malloc(sizeof(struct string));
+	res->line = malloc(size);
+	res->size = size;
+}
+
+String collectOutput(int fd){
+	int r; int len = 0; int size = 4096;
+	char *buff = malloc(size);
+	do
+	{
+		r = read(fd,buff+len,size-len);
+		if(r>0)
+			len += r;
+		if(len==size){
+			char* olbuff = buff;
+			buff = realloc(buff,size);
+			if(!buff)
+				exit(-1);
+			free (olbuff);
+			size*=2;
+		}		
+	} while(r>0);
+	close(fd);
+	String res = create_String_sized(len+1);
+	memcpy(res->line,buff,len);
+	res->line[len] = '\0';
+	return res;
+}
+
+int checkForErrors(int pid, int stderr){
+	int out;
+	char c;
+	if(read(stderr,&c,1)>0)
+		return 1;
+	wait(&out);
+	return out;
+}
+
+void closePipe(int p[2]){
+	close(p[0]);
+	close(p[1]);
+}
+
 /**
  * Executa um comando e retorna o input
  * Não altera o input do programa pai
@@ -49,8 +88,73 @@ char *getInput(int fildes){
  * @param input input para o programa a ser executado
  * @return output do programa
 */
-char *execute(Command comando, char *input){
-	execvp(comando->command, (char* const*) comando->args->values);
+String execute(Command comando, String input){
+	//To Do redirecionar o stderror e matar programa se algo acontecer
+	int w[2], r[2], e[2];
+	pipe(w); pipe(r); pipe(e);
+	int pid = fork();
+	if (!pid)
+	{
+		dup2(r[1], 1);//vai escrever para este
+		dup2(e[1],2);//vai mandar erros para este
+		dup2(w[0], 0);//vai ler para este
+		closePipe(r);
+		closePipe(w);
+		closePipe(e);
+		execvp(comando->command, (char* const*) comando->args->values);
+		exit(1);
+	}
+	close(w[0]); //pai nao le deste pipe
+	close(e[1]); //pai nao escreve neste pipe
+	close(r[1]); //pai nao escreve neste pipe
+	if(checkForErrors(pid,e[0])){
+		printf("Comando crashou");
+		exit(-1);
+	}
+	feedInput(w[1],input);
+	String output = collectOutput(r[0]);
+	return output;
+}
+
+/*
+void strrev(char* string, int tam){
+	char tmp;
+	for(int i = 0; i < tam/2 ; tam--, i++){
+		tmp = string[i];
+		string[i] = string[tam-1];
+		string[tam-1] = tmp; 
+	}
+}
+
+int getInOffSet(char* command, int i){
+	char inoffset[100];
+	int j = 0;
+	i--;
+	while( i > 0 && command[i] == ' ') i--;
+	while( i > 0 && command[i] >= '0' && command[i] <= '9'){
+		inoffset[j++] = command[i--];
+	}
+	if(j){
+		inoffset[j] = '\0';
+		strrev(inoffset, j);
+		return atoi(inoffset);
+	}
+	else return 1; // caso em que não encontrou o inOffSet
+}
+*/
+
+int getInOffSet(char* command, int max){
+	int i, j;
+	i = j = 0;
+	char inoffset[100];
+	while(i < max && (command[i] < '0' || command[i] > '9')) i++;
+	while(i < max && command[i] >= '0' && command[i] <= '9')
+		inoffset[j++] = command[i++];
+	if(j){
+		inoffset[j] = '\0';
+		return atoi(inoffset);
+	}
+	else return 1;
 }
 
 
@@ -58,8 +162,15 @@ int filterCmd(Command comando, char* command){
 	char buffer[MAX_BUFF];
 	int j, i = 0;
 	if(command[i] == '$') i++;
-	for(j = 0; command[i] != '\0' && command[i] != ' '; j++, i++){
+	while(command[i] == ' ') i++;
+
+	for(j = 0; command[i] != '\0'; j++, i++){
 		buffer[j] = command[i];
+		if(command[i] == '|'){
+			comando->inoffset = getInOffSet(command, i);
+			// é -1 porque vai ser incrementado de seguida
+			j = -1;
+		}
 	}
 	buffer[j++] = '\0';
 	char *cmdString = malloc(j);
@@ -96,7 +207,7 @@ Command commandDecoder(char* command){
 
 	Command cmd = malloc(sizeof(struct command));
 	cmd->args = initDynArray();
-
+	cmd->inoffset = 0;
 	int i = filterCmd(cmd, command);
 	//Isto é preciso visto que o execvp ignora o primeiro elemento do array
 	// porque pensa que é o nome do comando, logo, pus o nome do comando, mas é indiferente
@@ -110,5 +221,5 @@ Command commandDecoder(char* command){
 
 void printCommandArgs(Command cmd){
 	for(int i = 1; i < cmd->args->len - 1; i++)
-      printf("%s\n", (char*) dyn_index(cmd->args, i));
+      printf("Args: %s\n", (char*) dyn_index(cmd->args, i));
 }

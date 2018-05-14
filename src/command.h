@@ -2,16 +2,18 @@
 #define __COMMAND_H__
 
 #include "dynArrays.h"
+#include "notebook.h"
 
 typedef struct command
 {
     char *command;
+    int inoffset;
     DynArray args;
 }* Command;
 
-void redirectOutPut();
+int getInOffSet(char* command, int max);
 char *getInput(int fildes);
-char *execute(Command comando, char *input);
+String execute(Command comando, String input);
 Command commandDecoder(char* command);
 void printCommandArgs(Command command);
 
