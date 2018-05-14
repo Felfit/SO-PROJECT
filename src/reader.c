@@ -18,8 +18,8 @@ void redirectOutputToFile(int fildes){
 }*/
 
 String readln(int fildes, int *n){
-	int rd=1,i=0;
-	char c=' '; // ver se é preciso começar com ' '
+  int rd=1,i=0;
+  char c=' '; // ver se é preciso começar com ' '
   String str = malloc(sizeof( struct string));
   str->line = (char*)malloc(MAX_SIZE);
 
@@ -50,7 +50,7 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
 
               int j=0;
               while(tmp->line[j]!='\0'){
-                writeOutput(tmp, fd);
+                //writeOutput(tmp, fd);
                 j++;
               }
             }

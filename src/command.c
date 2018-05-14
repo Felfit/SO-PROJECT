@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "notebook.h"
 
 #define MAX_BUFF 1024
 
@@ -42,6 +43,42 @@ char *getInput(int fildes){
 	return input;
 }
 
+void feedInput(int fd, String input){
+	if(input)
+		write(fd,input->line,input->size);
+	close(fd);
+}
+
+String create_String_sized(int size){
+	String res = malloc(sizeof(struct string));
+	res->line = malloc(size);
+	res->size = size;
+}
+
+String collectOutput(int fd){
+	int r; int len = 0; int size = 4096;
+	char *buff = malloc(size);
+	do
+	{
+		r = read(fd,buff+len,size-len);
+		if(r>0)
+			len += r;
+		if(len==size){
+			char* olbuff = buff;
+			buff = realloc(buff,size);
+			if(!buff)
+				exit(-1);
+			free (olbuff);
+			size*=2;
+		}		
+	} while(r>0);
+	close(fd);
+	String res = create_String_sized(len+1);
+	memcpy(res->line,buff,len);
+	res->line[len] = '\0';
+	return res;
+}
+
 /**
  * Executa um comando e retorna o input
  * Não altera o input do programa pai
@@ -49,8 +86,25 @@ char *getInput(int fildes){
  * @param input input para o programa a ser executado
  * @return output do programa
 */
-char *execute(Command comando, char *input){
-	execvp(comando->command, (char* const*) comando->args->values);
+String execute(Command comando, String input){
+	//To Do redirecionar o stderror e matar programa se algo acontecer
+	int w[2], r[2], e[2];
+	pipe(w); pipe(r);
+	if(!fork()){
+		close(w[1]);//vai ler deste pipe
+		close(r[0]);//vai escrever para o este pipe
+		dup2(r[1], 1);
+		close(r[1]);
+		dup2(w[0], 0);
+		close(w[0]);
+		execvp(comando->command, (char* const*) comando->args->values);
+		exit(0);
+	}
+	close(w[0]); //vai escrever deste pipe
+	close(r[1]); //vai ler para o este pipe
+	feedInput(w[1],input);
+	String output = collectOutput(r[0]);
+	return output;
 }
 
 
