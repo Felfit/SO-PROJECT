@@ -9,7 +9,7 @@
 #include "notebook.h"
 #include "reader.h"
 
-#define MAX_SIZE 1024
+#define MAX_SIZE 4096
 
 String makeStr (char* buf, int c){
   String str = malloc(sizeof( struct string));
@@ -31,7 +31,7 @@ void filterBuffer(Notebook a, char* buff){
     }
     if(buff[i] == '\n'){
       String res = makeStr(buff + i- count, count);
-      insertLine(a, tmp);
+      insertLine(a, res);
       count = 0 ;
     }
     count++;
