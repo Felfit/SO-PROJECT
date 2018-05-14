@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
+#include <string.h>
 
 #include "notebook.h"
 #include "reader.h"
@@ -17,7 +17,6 @@ String makeStr (char* buf, int c){
   memcpy(str->line, buf, c);
   str->line[c] = '\0';
   str->size = c;
-  printf("%s",str->line);
   return str;
 }
 
@@ -27,12 +26,13 @@ void filterBuffer(Notebook a, char* buff){
     if(buff[i] == '>'){
       while(buff[i] != '<')
         i++;
-      i+=4;
+      i+=5;
     }
     if(buff[i] == '\n'){
       String res = makeStr(buff + i- count, count);
       insertLine(a, res);
       count = 0 ;
+      i++;
     }
     count++;
     i++;
