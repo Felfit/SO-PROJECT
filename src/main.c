@@ -4,15 +4,11 @@
 #include <fcntl.h>
 #include <string.h>
 
-<<<<<<< HEAD
-#define MAX_SIZE 1
-=======
 #include "reader.h"
 #include "notebook.h"
 #include "command.h"
-/*
+
 #define MAX_SIZE 1024
->>>>>>> 6da8c500f54acca3c71f562b597b42a84168d378
 
 typedef struct string
 {
@@ -22,19 +18,13 @@ typedef struct string
 
 String readln(int fildes, int *n, int size){
 	int rd=1,i=0;
-	char c=' '; // ver se é preciso começar com ' '
   String str = malloc(sizeof( struct string));
   str->line = (char*)malloc(MAX_SIZE);
   int count=1;
-    while(i<size && rd>0 && c!='\n'){
-      rd = read(fildes, &c, 1); // lê 1 para já
-          if (rd && c!="\n"){
-            str->line[i] = c;
-              if(strlen(str->line)==MAX_SIZE)
-              str->line = realloc(str->line, +1);
-            }
+    while(i<size && rd>0 && str->line[i]!='\n'){
+      rd = read(fildes, &str->line, 1024); // lê 1 para já
         i++;
-        count++;
+
     }
 
     if(i == 0) return NULL; //ver este caso
@@ -79,13 +69,9 @@ int main(int argc,char *argv[])
 		fprintf(stderr,"Use ./program <dumb_path>\n");
 		return 0;
 	}
-<<<<<<< HEAD
-    readfromFile(argv[1]);
-
-=======
     //printf("ola");
     //readfromFile(n, argv[1]);
-    
+
     char *command = "$ls -la";
     Command cmd = commandDecoder(command);
     printf("%s\n", cmd->command );
@@ -95,6 +81,5 @@ int main(int argc,char *argv[])
     la[0] = "-la"; la[1] = NULL;
     execvp(cmd->command, (char* const*)la);
   */
->>>>>>> 6da8c500f54acca3c71f562b597b42a84168d378
 return 0;
 }
