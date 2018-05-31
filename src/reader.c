@@ -27,6 +27,13 @@ void freeString(String c){
   return;
 }
 
+void stringPrepend(String s1, String s2){
+  s1->size += s2->size;
+  char* n = strcat(s2->line,s1->line);
+  free(s1->line);
+  s1->line = n;
+}
+
 String filterBuffer(Notebook a, char* buff, int size, String prev){
   int i=0,count=0;
   while(i < size){
@@ -38,10 +45,7 @@ String filterBuffer(Notebook a, char* buff, int size, String prev){
     if(buff[i] == '\n'){
       String res = makeStr(buff + i- count, count);
       if(prev != NULL){
-        res->size += prev->size;
-        char* n = strcat(prev->line,res->line);
-        free(res->line);
-        res->line = n;
+        stringPrepend(res,prev);
         freeString(prev);
         prev = NULL;
       }

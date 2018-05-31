@@ -121,25 +121,13 @@ String execute(Command comando, String input){
 
 
 int getInOffSet(char* command, int *i){
-	//char inoffset[MAX_BUFF];
-	int j = 0, inoffset;
+	int inoffset;
 	int scanned = sscanf(command + (*i), "%d|", &inoffset);
 	if(scanned){
 		(*i) += (int) log10(inoffset) + 1;
 		return inoffset;
 	}
 	else return 0;
-
-/*
-	while(command[*i] != '\0' && command[*i] >= '0' && command[*i] <= '9')
-		inoffset[j++] = command[(*i)++];
-	if(j){
-		inoffset[j] = '\0';
-		(*i)++;
-		return atoi(inoffset);
-	}
-	else return 1;
-*/
 }
 
 int filterCmd(Command comando, char* command){
