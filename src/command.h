@@ -6,12 +6,13 @@
 
 typedef struct command
 {
-    char *command;
+    //char *command;
     int inoffset;
-    DynArray args;
     char* red_in;
     char* red_out;
-    struct command *prox;
+    int append_out;
+    DynArray args;
+    struct command * next;
 }* Command;
 
 int getInOffSet(char* command, int *i);
@@ -19,5 +20,6 @@ char *getInput(int fildes);
 String execute(Command comando, String input);
 Command commandDecoder(char* command);
 void printCommandArgs(Command command);
+void printCommand(Command cmd);
 
 #endif

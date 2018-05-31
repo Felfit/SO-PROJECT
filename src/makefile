@@ -9,4 +9,4 @@ notebook:
 	$(CC) $(CFLAGS) $(EXEC) $(OBJECTS) $(LINC)
 
 clean: 
-rm $(EXEC)
+	rm $(EXEC)
