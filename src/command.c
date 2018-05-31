@@ -69,7 +69,7 @@ String collectOutput(int fd){
 	return res;
 }
 
-int checkForErrors(int pid, int stderr){
+int checkForErrors(int stderr){
 	int out;
 	String err = collectOutput(stderr);
 	if(err->size > 1){
@@ -84,6 +84,61 @@ void closePipe(int p[2]){
 	close(p[1]);
 }
 
+
+void redirectInputOutputCommand(Command comando){
+	if(comando->red_in){
+		int in = open(comando->red_in, O_RDONLY, 0644);
+		if(in<0)
+			exit(1);
+		dup2(in, 0);
+	}
+	if(comando->red_out){
+		int out = open(comando->red_out,O_WRONLY | O_CREAT,0644);
+		if(out<0)
+			exit(1);
+		dup2(out, 1);
+	}
+}
+
+void execFilho(Command comando, int w[2], int r[2], int e[2]){
+	dup2(r[1], 1);//vai escrever para este
+	dup2(e[1], 2);//vai mandar erros para este
+	dup2(w[0], 0);//vai ler deste
+	closePipe(r);
+	closePipe(w);
+	closePipe(e);
+	redirectInputOutputCommand(comando);
+	execvp(comando->command, (char* const*) comando->args->values);
+	exit(1);
+}
+
+/**
+ * Recebe uma lista de comandos
+ * 
+*/
+void execPipeline(Command cmd ,int w[2], int r[2], int e[2])
+{
+	if (!cmd)
+		return;
+	int p[2];
+	int tempIn[2];
+	tempIn[0] = w[0];
+	tempIn[1] = w[1];	
+	while(cmd->next){
+		pipe(p);
+		if(!fork()){
+			execFilho(cmd,tempIn,p,e);
+		}
+		close(p[1]);
+		tempIn[0] = p[0];
+		tempIn[1] = p[1];	
+		cmd = cmd->next;	
+	}
+	if(!fork()){
+		execFilho(cmd,tempIn,r,e);
+	}
+}
+
 /**
  * Executa um comando e retorna o input
  * Não altera o input do programa pai
@@ -95,23 +150,12 @@ String execute(Command comando, String input){
 	//To Do redirecionar o stderror e matar programa se algo acontecer
 	int w[2], r[2], e[2];
 	pipe(w); pipe(r); pipe(e);
-	int pid = fork();
-	if (!pid)
-	{
-		dup2(r[1], 1);//vai escrever para este
-		dup2(e[1],2);//vai mandar erros para este
-		dup2(w[0], 0);//vai ler para este
-		closePipe(r);
-		closePipe(w);
-		closePipe(e);
-		execvp(comando->command, (char* const*) comando->args->values);
-		exit(1);
-	}
+	execPipeline(comando,w,r,e);
 	close(w[0]); //pai nao le deste pipe
 	close(e[1]); //pai nao escreve neste pipe
 	close(r[1]); //pai nao escreve neste pipe
 	feedInput(w[1],input);
-	if(checkForErrors(pid,e[0])){
+	if(checkForErrors(e[0])){
 		printf("Comando crashou");
 		exit(-1);
 	}
@@ -153,7 +197,7 @@ int filterCmd(Command comando, char* command){
 	return i;
 }
 
-void filterArgs(Command comando, char* command, int iArgs){
+void filterArgs(DynArray args, char* command, int iArgs){
 	char buffer[MAX_BUFF];
 	int i = 0;
 	while(command[iArgs] != '\0'){
@@ -165,7 +209,7 @@ void filterArgs(Command comando, char* command, int iArgs){
 			buffer[i++] = '\0';
 			char* arg = malloc(i);
 			strcpy(arg, buffer);
-			append(comando->args, arg);
+			append(args, arg);
 			i = 0;
 		}
 	}
@@ -180,16 +224,20 @@ Command commandDecoder(char* command){
 	if(*command != '$') return NULL;
 
 	Command cmd = malloc(sizeof(struct command));
-	cmd->args = initDynArray();
+	DynArray args;
+	args = initDynArray();
 	cmd->inoffset = 0;
 	int i = filterCmd(cmd, command);
 	//Isto é preciso visto que o execvp ignora o primeiro elemento do array
 	// porque pensa que é o nome do comando, logo, pus o nome do comando, mas é indiferente
 	// o que estiver no primeiro elemento do array.
-	append(cmd->args, cmd->command);
-	filterArgs(cmd, command, i);
-	append(cmd->args, 0);
-	
+	append(args, cmd->command);
+	filterArgs(args, command, i);
+	append(args, 0);
+	cmd->args = args;
+	cmd->next = NULL;
+	cmd->red_in = NULL;
+	cmd->red_out = NULL;
 	return cmd;
 }
 
