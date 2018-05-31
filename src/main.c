@@ -17,12 +17,11 @@ int main(int argc,char *argv[])
 		  return -1;
 	  }
   
-    
     Notebook n = initNotebook();
     readfromFile(n,argv[1]);
     executeCommands(n);
     writeNotebook(n,"None");
-    writeNotebook(n,"test.txt");
+    writeNotebook(n,"testes.txt");
     /*
     
     char* command = "$ 23 | ls -l -la";

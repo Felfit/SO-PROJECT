@@ -9,6 +9,9 @@ typedef struct command
     char *command;
     int inoffset;
     DynArray args;
+    char* red_in;
+    char* red_out;
+    struct command *prox;
 }* Command;
 
 int getInOffSet(char* command, int *i);

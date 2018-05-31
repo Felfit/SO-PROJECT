@@ -13,6 +13,7 @@
 
 #define MAX_BUFF 1024
 
+
 /**
  * Devolve o input da ultima instrução
  * @param fildes O ficheiro onde se encontra o input
@@ -121,7 +122,6 @@ String execute(Command comando, String input){
 
 
 int getInOffSet(char* command, int *i){
-	//char inoffset[MAX_BUFF];
 	int j = 0, inoffset;
 	int scanned = sscanf(command + (*i), "%d|", &inoffset);
 	if(scanned){
@@ -129,17 +129,6 @@ int getInOffSet(char* command, int *i){
 		return inoffset;
 	}
 	else return 0;
-
-/*
-	while(command[*i] != '\0' && command[*i] >= '0' && command[*i] <= '9')
-		inoffset[j++] = command[(*i)++];
-	if(j){
-		inoffset[j] = '\0';
-		(*i)++;
-		return atoi(inoffset);
-	}
-	else return 1;
-*/
 }
 
 int filterCmd(Command comando, char* command){
@@ -151,6 +140,15 @@ int filterCmd(Command comando, char* command){
 		comando->inoffset = 1;
 		i++;
 	}
+	if(command[i] == '>'){
+		while(command[i] != '\0' && command[i] == ' ') i++;
+		while(command[i] != '\0' && command[i] != ' ') buffer[j++] = command[i];
+		buffer[j++] = '\0';
+		char *red_in = malloc(j);
+		strcpy(red_in, buffer);
+		comando->red_in = red_in;
+	}
+
 	else comando->inoffset = getInOffSet(command, &i);
 	
 	while(command[i] == ' ' || command[i] == '|') i++;
@@ -165,13 +163,25 @@ int filterCmd(Command comando, char* command){
 	return i;
 }
 
+int createPipeCommand(Command comando, char* command){
+	Command *last = &(comando->prox);
+	while(!(*last)) last = &((*last)->prox);
+	*last = commandDecoder(command);
+}
+
 void filterArgs(Command comando, char* command, int iArgs){
 	char buffer[MAX_BUFF];
 	int i = 0;
 	while(command[iArgs] != '\0'){
 		while(command[iArgs] != '\0' && command[iArgs] == ' ') iArgs++;
 		while(command[iArgs] != '\0' && command[iArgs] != ' '){
-			buffer[i++] = command[iArgs++];
+			if(command[iArgs] == '|'){
+				//Sim tou a alterar a string(Tenho noção que pode ser uma má práticá
+				*(command-1) = '$';
+				comando->prox = createPipeCommand(comando, command + iArgs-1);
+				return;
+			}
+			else buffer[i++] = command[iArgs++];
 		}
 		if(i){
 			buffer[i++] = '\0';
@@ -181,6 +191,7 @@ void filterArgs(Command comando, char* command, int iArgs){
 			i = 0;
 		}
 	}
+
 }
 
 
@@ -194,6 +205,8 @@ Command commandDecoder(char* command){
 	Command cmd = malloc(sizeof(struct command));
 	cmd->args = initDynArray();
 	cmd->inoffset = 0;
+	cmd->red_in = cmd->red_out = NULL;
+	cmd->prox = NULL;
 	int i = filterCmd(cmd, command);
 	//Isto é preciso visto que o execvp ignora o primeiro elemento do array
 	// porque pensa que é o nome do comando, logo, pus o nome do comando, mas é indiferente
