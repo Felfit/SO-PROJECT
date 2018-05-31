@@ -311,8 +311,7 @@ Command commandDecoder(char* command){
 	cmd->red_in = cmd->red_out = NULL;
 	cmd->append_out = 0;
 	cmd->next = NULL;
-	int i = filterCmd(cmd, command);
-	filterArgs(cmd, command, i);
+	filterArgs(cmd, command, 1);
 	append(cmd->args, 0);
 	return cmd;
 }
