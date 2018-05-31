@@ -93,7 +93,10 @@ void redirectInputOutputCommand(Command comando){
 		dup2(in, 0);
 	}
 	if(comando->red_out){
-		int out = open(comando->red_out,O_WRONLY | O_CREAT,0644);
+		int permissions = O_WRONLY | O_CREAT;
+		if (comando->append_out)
+			permissions |= O_APPEND;
+		int out = open(comando->red_out,permissions,0644);
 		if(out<0)
 			exit(1);
 		dup2(out, 1);
@@ -238,6 +241,7 @@ Command commandDecoder(char* command){
 	cmd->next = NULL;
 	cmd->red_in = NULL;
 	cmd->red_out = NULL;
+	cmd->append_out = 0;
 	return cmd;
 }
 

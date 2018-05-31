@@ -10,6 +10,7 @@ typedef struct command
     int inoffset;
     char* red_in;
     char* red_out;
+    int append_out;
     DynArray args;
     struct command * next;
 }* Command;
