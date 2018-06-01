@@ -87,6 +87,7 @@ int checkForErrors(int stderr){
 	int out;
 	String err = collectOutput(stderr);
 	if(err->size > 1){
+		printf("%s",err->line);
 		return 1;
 	}
 	wait(&out);

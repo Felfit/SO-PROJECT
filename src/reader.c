@@ -62,8 +62,12 @@ String filterBuffer(Notebook a, char* buff, int size, String prev){
   }
   if (prev){
     prev->size--;
-    insertLine(a,prev);
-  }
+    if (strlen(prev->line)) {
+      insertLine(a, prev);
+    }
+    else  
+      freeString(prev);
+}
   return NULL;
 }
 
