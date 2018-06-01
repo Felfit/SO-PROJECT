@@ -10,9 +10,9 @@
 
 #define MAX_SIZE 4096
 
+
 int main(int argc,char *argv[])
 {
-    
     if(argc < 2){
 		  fprintf(stderr,"Use ./program <dumb_path>\n");
 		  return -1;
@@ -22,13 +22,13 @@ int main(int argc,char *argv[])
     readfromFile(n,argv[1]);
     executeCommands(n);
     writeNotebook(n,"None.txt");
-    
+    switchNotebooks(argv[1], "None.txt");
     /*
-    char* commands[] = {"$ ls |sort", "$ls <test.txt |sort", "$ls |sort >test2.txt", "$ls >test.txt >test2.txt",
-                        "$ls |sort |anotherSort |something >>random.txt", "$>test.txt ls", "$|sort < tes.txt"};
+    char* commands[] = {"$ ls | sort", "$ ls < test.txt | sort", "$ ls | sort > test2.txt", "$ls > test.txt > test2.txt",
+                        "$ls | sort | anotherSort | something >> random.txt", "$ > test.txt ls", "$|sort < tes.txt"};
     
     for(int i = 0; i < 7; i++){
-        printf("/////Case - %d/////\n", i);
+        printf("/////Case - %s/////\n", commands[i]);
         Command cmd = commandDecoder(commands[i]);
         printCommand(cmd);
         printf("///////////////////\n");

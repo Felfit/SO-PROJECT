@@ -22,6 +22,10 @@ void ifNotSpace(char* string, int* i){
 	while(string[*i] && string[*i] != ' ') (*i)++;
 }
 
+int hasCommand(Command cmd){
+	return cmd->args->len > 0;
+}
+
 
 /**
  * Devolve o input da ultima instrução
@@ -187,6 +191,7 @@ int getInOffSet(char* command, int *i){
 	else return 0;
 }
 
+/*
 int filterCmd(Command comando, char* command){
 	char buffer[MAX_BUFF];
 	int j, i = 0;
@@ -209,7 +214,7 @@ int filterCmd(Command comando, char* command){
 	strcpy(cmdString, buffer);
 	append(comando->args, cmdString);
 	return i;
-}
+}*/
 
 void insertCommand(Command cmd, char* command){
 	int len = strlen(command);
@@ -230,10 +235,12 @@ int insertInputRedirect(Command cmd, char* command){
 		buffer[j++] = command[i++];
 
 	if(j) buffer[j++] = '\0';
-	char* inputFile = malloc(j);
-	strcpy(inputFile, buffer);
+	char* file = malloc(j);
+	strcpy(file, buffer);
+	if(hasCommand(cmd))
 	//if(cmd->red_in) free(cmd->red_in);
-	cmd->red_in = inputFile;
+		cmd->red_in = file;
+	else cmd->red_out = file;
 	return i;
 }
 
@@ -249,10 +256,12 @@ int insertOutputRedirect(Command cmd, char* command){
 		buffer[j++] = command[i++];
 
 	if(j) buffer[j++] = '\0';
-	char* outputFile = malloc(j);
-	strcpy(outputFile, buffer);
+	char* file = malloc(j);
+	strcpy(file, buffer);
+	if(hasCommand(cmd))
 	//if(cmd->red_out) free(cmd->red_out);
-	cmd->red_out = outputFile;
+		cmd->red_out = file;
+	else cmd->red_in = file;
 	return i;
 }
 

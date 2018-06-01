@@ -128,3 +128,9 @@ Notebook initNotebook(){
     r->outputs = initDynArray();
     return r;
 }
+
+
+void switchNotebooks(char* old, char* new){
+    remove(old);
+    rename(new, old);
+}

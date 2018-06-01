@@ -1,146 +1,18 @@
-/////Case - 0/////
-{
-Args: ls
-red_in: (null)
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: 0xe39120
->>>>>>>>>>>>>>>>>>>>
-{
-Args: sort
-red_in: (null)
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: (nil)
-}
-<<<<<<<<<<<<<<<<<<<<
-
-}
-///////////////////
-/////Case - 1/////
-{
-Args: ls
-red_in: test.txt
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: 0xe39320
->>>>>>>>>>>>>>>>>>>>
-{
-Args: sort
-red_in: (null)
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: (nil)
-}
-<<<<<<<<<<<<<<<<<<<<
-
-}
-///////////////////
-/////Case - 2/////
-{
-Args: ls
-red_in: (null)
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: 0xe39500
->>>>>>>>>>>>>>>>>>>>
-{
-Args: sort
-red_in: (null)
-red_out : test2.txt
-append_out : 0
-inoffset: 0
-next: (nil)
-}
-<<<<<<<<<<<<<<<<<<<<
-
-}
-///////////////////
-/////Case - 3/////
-{
-Args: ls
-red_in: (null)
-red_out : test2.txt
-append_out : 0
-inoffset: 0
-next: (nil)
-}
-///////////////////
-/////Case - 4/////
-{
-Args: ls
-red_in: (null)
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: 0xe39840
->>>>>>>>>>>>>>>>>>>>
-{
-Args: sort
-red_in: (null)
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: 0xe39950
->>>>>>>>>>>>>>>>>>>>
-{
-Args: anotherSort
-red_in: (null)
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: 0xe39a50
->>>>>>>>>>>>>>>>>>>>
-{
-Args: something
-red_in: (null)
-red_out : random.txt
-append_out : 1
-inoffset: 0
-next: (nil)
-}
-<<<<<<<<<<<<<<<<<<<<
-
-}
-<<<<<<<<<<<<<<<<<<<<
-
-}
-<<<<<<<<<<<<<<<<<<<<
-
-}
-///////////////////
-/////Case - 5/////
-{
-Args: ls
-red_in: (null)
-red_out : test.txt
-append_out : 0
-inoffset: 0
-next: (nil)
-}
-///////////////////
-/////Case - 6/////
-{
-red_in: (null)
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: 0xe39d30
->>>>>>>>>>>>>>>>>>>>
-{
-Args: sort
-red_in: tes.txt
-red_out : (null)
-append_out : 0
-inoffset: 0
-next: (nil)
-}
-<<<<<<<<<<<<<<<<<<<<
-
-}
-///////////////////
+command.c
+command.h
+dynArrays.c
+dynArrays.h
+main.c
+makefile
+Makefile
+None
+note
+notebook
+notebook.c
+notebook.h
+randomNames.txt
+reader.c
+reader.h
+resultadoEsperado.txt
+results.txt
+testes.txt
