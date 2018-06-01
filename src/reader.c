@@ -54,7 +54,6 @@ String filterBuffer(Notebook a, char* buff, int size, String prev){
     return res;
   }
   if (prev){
-    prev->size--;
     if (strlen(prev->line)) {
       insertLine(a, prev);
     }
