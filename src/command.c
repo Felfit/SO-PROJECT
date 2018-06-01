@@ -13,10 +13,14 @@
 
 #define MAX_BUFF 1024
 
-void skipSpaces(char* string, int* i){
-	while(string[*i] && string[*i] == ' ') 
-		(*i) = (*i) + 1;
+int skipSpaces(char* string, int* i){
+	int nSpaces = 0;
+	while(string[*i] && string[*i] == ' '){ 
+		(*i) = (*i) + 1; nSpaces++;
+	}
+	return nSpaces;
 }
+
 
 void ifNotSpace(char* string, int* i){
 	while(string[*i] && string[*i] != ' ') (*i)++;
@@ -233,7 +237,7 @@ int insertCommand(Command cmd, char* command){
 	else{
 		char buffer[MAX_BUFF];
 		int i = 1, j = 0;
-		skipSpaces(command, & i);
+		int nSpaces = skipSpaces(command, & i);
 		while(command[i] && command[i] != ' ')
 			buffer[j++] = command[i++];
 		if(j){
@@ -241,7 +245,7 @@ int insertCommand(Command cmd, char* command){
 			char* newCommand = (char *)malloc(j);
 			strcpy(newCommand, buffer);
 			append(cmd->args, newCommand);
-			return j;
+			return j + nSpaces;
 		}
 	}
 	//free(newCommand);

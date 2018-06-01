@@ -13,7 +13,7 @@
 
 int main(int argc,char *argv[])
 {
-    /*
+    
     if(argc < 2){
 		  fprintf(stderr,"Use ./program <dumb_path>\n");
 		  return -1;
@@ -24,16 +24,20 @@ int main(int argc,char *argv[])
     executeCommands(n);
     writeNotebook(n,"None.txt");
     switchNotebooks(argv[1], "None.txt");
-    */
-    char* commands[] = {"$ 21|sort", "$ ls < test.txt | sort", "$ ls | sort > test2.txt", "$ls > test.txt > test2.txt",
-                        "$ls | sort | anotherSort | something >> random.txt", "$ > test.txt ls", "$|sort < tes.txt"};
     
-    for(int i = 0; i < 7; i++){
+    
+    /*
+    char* commands[] = {"$ ls", "$| wc -l", "$2| line", "$ ls | line",
+                        "$| cat >outputFile.txt", "$2| cat >>outputFile.txt", "$ cat <outputFile.txt",
+                        "$ ls /bin/ | head >outputFile2.txt","$ cat <outputFile2.txt | sort -r >outputFile3.txt",
+                        "$ cat <outputFile3.txt"};
+    
+    for(int i = 0; i < 10; i++){
         printf("/////Case - %s/////\n", commands[i]);
         Command cmd = commandDecoder(commands[i]);
         printCommand(cmd);
         printf("///////////////////\n");
-    }
+    }*/
     
 
     return 0;

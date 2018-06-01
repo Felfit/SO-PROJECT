@@ -1,0 +1,10 @@
+btrfs-map-logical
+btrfs-image
+btrfs-find-root
+btrfs-debug-tree
+btrfs-convert
+btrfsck
+btrfs-calc-size
+btrfs
+bash
+archdetect
