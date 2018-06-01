@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "dynArrays.h"
-
+#include <string.h>
 
 typedef struct realDynArray
 {
@@ -22,17 +22,18 @@ void insert(DynArray a, int index, void* value){
 
 static void increaseSize(DynArray a){
     RealDynArray x = (RealDynArray)a;
-    void *oldvalues = x->values;
+    void **oldvalues = x->values;
     int newSize = x->size * 2;
-    x->values = realloc(x->values,newSize);
+    x->values = malloc(newSize * sizeof(void*));
+    memcpy(x->values,oldvalues,sizeof(void*)*x->size);
     x->size = newSize;
     free (oldvalues);
 }
 
 void append(DynArray a, void* value){
     RealDynArray x = (RealDynArray)a;
-    if (x->len == x->size){
-        increaseSize(a);
+    if (x->len + 1 == x->size){   
+        increaseSize(a);  
     }
     x->values[x->len++] = value;
 }
@@ -41,6 +42,6 @@ DynArray initDynArray(){
     RealDynArray x = malloc(sizeof(struct realDynArray));
     x->len = 0;
     x->size = 10;
-    x->values = malloc(sizeof(void *)*x->size);
+    x->values = malloc(sizeof(void*)*x->size);
     return (DynArray)x;
 }

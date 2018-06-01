@@ -6,7 +6,6 @@
 
 typedef struct command
 {
-    //char *command;
     int inoffset;
     char* red_in;
     char* red_out;

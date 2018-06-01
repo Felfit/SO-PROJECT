@@ -20,16 +20,28 @@ String makeStr (char* buf, int c){
   return str;
 }
 
-void filterBuffer(Notebook a, char* buff){
+void stringPrepend(String s1, String s2){
+  s1->size += s2->size;
+  char* n = strcat(s2->line,s1->line);
+  free(s1->line);
+  s1->line = n;
+}
+
+String filterBuffer(Notebook a, char* buff, int size, String prev){
   int i=0,count=0;
-  while(i == 0 || buff[i-1] != '\0'){
-    if(buff[i] == '>'){
+  while(i < size){
+    if(buff[i]== '>' && count == 1){
       while(buff[i] != '<')
         i++;
       i+=5;
     }
-    if(buff[i] == '\n' || buff[i] == '\0'){
+    if(buff[i] == '\n'){
       String res = makeStr(buff + i- count, count);
+      if(prev != NULL){
+        stringPrepend(res,prev);
+        freeString(prev);
+        prev = NULL;
+      }
       insertLine(a, res);
       count = 0 ;
       i++;
@@ -37,6 +49,19 @@ void filterBuffer(Notebook a, char* buff){
     count++;
     i++;
   }
+  if(i >= size && i > count){
+    String res = makeStr(buff + i - count, count);
+    return res;
+  }
+  if (prev){
+    prev->size--;
+    if (strlen(prev->line)) {
+      insertLine(a, prev);
+    }
+    else  
+      freeString(prev);
+  }
+  return NULL;
 }
 
 
@@ -44,12 +69,16 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
   int fd, count=0, rd=1;
   char* buff = (char*)malloc(MAX_SIZE);
     if((fd = open(filepath, O_RDONLY, 0644)) > 0){
-        while(rd>0){
-          rd = read(fd, buff, 4095);
-          count+= rd;
-        }
-        *(buff + count) = '\0';
-        filterBuffer(a, buff);
+        String res = NULL;
+        do
+        {
+          while(rd>0){
+            rd = read(fd, buff, 4096);
+            count+= rd;
+          }
+          res = filterBuffer(a, buff, count,res);
+          count = 0;
+        } while(res != NULL);
 			}
     else perror("Can't open this file!");
   close(fd);

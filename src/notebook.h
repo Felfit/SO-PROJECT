@@ -8,6 +8,8 @@ typedef struct string
 }* String;
 
 typedef struct notebook *Notebook;
+
+void freeString(String c); 
 void writeNotebook(Notebook x,char* filepath);
 Notebook initNotebook();
 void insertLine(Notebook x, String l);

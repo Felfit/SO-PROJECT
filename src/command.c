@@ -52,7 +52,7 @@ char *getInput(int fildes){
 
 void feedInput(int fd, String input){
 	if(input)
-		write(fd,input->line,input->size);
+		write(fd,input->line,input->size-1);
 	close(fd);
 }
 
@@ -91,6 +91,7 @@ int checkForErrors(int stderr){
 	int out;
 	String err = collectOutput(stderr);
 	if(err->size > 1){
+		printf("%s",err->line);
 		return 1;
 	}
 	wait(&out);
