@@ -139,3 +139,9 @@ Notebook initNotebook(){
     r->insertable=1;
     return r;
 }
+
+
+void switchNotebooks(char* old, char* new){
+    remove(old);
+    rename(new, old);
+}
