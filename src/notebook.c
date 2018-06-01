@@ -7,12 +7,14 @@
 #include "notebook.h"
 #include "command.h"
 #include <fcntl.h>
+#include <stdio.h>
 
 typedef struct notebook
 {
     DynArray lines; //Array das linhas do ficheiro
     DynArray commands; //Array de pares (indices,comandos)
     DynArray outputs;  //Array de strigs dos outputs.
+    int insertable;
 }* Notebook;
 
 int getNumberLines(Notebook x){
@@ -23,9 +25,17 @@ int getNumberLines(Notebook x){
 void insertLine(Notebook x, String l){
     if(!l)
         return;
+    if(x->insertable && strcmp(">>>",l->line)==0)
+        x->insertable = 0;
+    if(!x->insertable){
+        if(strstr(l->line,"<<<"))
+            x->insertable = 1;
+        freeString(l);
+        return;
+    }
     char * line = l->line;
     if(line[0] == '$'){
-        Command c = commandDecoder(line);
+        Command c = commandDecoder(line);     
         append(x->commands,c);
     }
     append(x->lines,l);
@@ -126,5 +136,6 @@ Notebook initNotebook(){
     r->lines = initDynArray();
     r->commands = initDynArray();
     r->outputs = initDynArray();
+    r->insertable=1;
     return r;
 }

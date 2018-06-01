@@ -44,7 +44,7 @@ char *getInput(int fildes){
 
 void feedInput(int fd, String input){
 	if(input)
-		write(fd,input->line,input->size);
+		write(fd,input->line,input->size-1);
 	close(fd);
 }
 

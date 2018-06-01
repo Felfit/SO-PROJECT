@@ -37,7 +37,7 @@ void stringPrepend(String s1, String s2){
 String filterBuffer(Notebook a, char* buff, int size, String prev){
   int i=0,count=0;
   while(i < size){
-    if(buff[i] == '>'){
+    if(buff[i]== '>' && count == 1){
       while(buff[i] != '<')
         i++;
       i+=5;
@@ -61,6 +61,7 @@ String filterBuffer(Notebook a, char* buff, int size, String prev){
     return res;
   }
   if (prev){
+    prev->size--;
     insertLine(a,prev);
   }
   return NULL;
