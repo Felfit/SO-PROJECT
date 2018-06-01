@@ -20,13 +20,6 @@ String makeStr (char* buf, int c){
   return str;
 }
 
-void freeString(String c){
-  if (!c) return;
-  free(c->line);
-  free(c);
-  return;
-}
-
 void stringPrepend(String s1, String s2){
   s1->size += s2->size;
   char* n = strcat(s2->line,s1->line);
@@ -67,7 +60,7 @@ String filterBuffer(Notebook a, char* buff, int size, String prev){
     }
     else  
       freeString(prev);
-}
+  }
   return NULL;
 }
 

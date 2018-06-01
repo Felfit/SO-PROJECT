@@ -17,6 +17,15 @@ typedef struct notebook
     int insertable;
 }* Notebook;
 
+void freeString(String c)
+{
+    if (!c)
+        return;
+    free(c->line);
+    free(c);
+    return;
+}
+
 int getNumberLines(Notebook x){
     DynArray z = x->lines;
     return z->len;
