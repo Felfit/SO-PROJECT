@@ -13,6 +13,7 @@
 
 int main(int argc,char *argv[])
 {
+    /*
     if(argc < 2){
 		  fprintf(stderr,"Use ./program <dumb_path>\n");
 		  return -1;
@@ -23,8 +24,8 @@ int main(int argc,char *argv[])
     executeCommands(n);
     writeNotebook(n,"None.txt");
     switchNotebooks(argv[1], "None.txt");
-    /*
-    char* commands[] = {"$ ls | sort", "$ ls < test.txt | sort", "$ ls | sort > test2.txt", "$ls > test.txt > test2.txt",
+    */
+    char* commands[] = {"$ 21|sort", "$ ls < test.txt | sort", "$ ls | sort > test2.txt", "$ls > test.txt > test2.txt",
                         "$ls | sort | anotherSort | something >> random.txt", "$ > test.txt ls", "$|sort < tes.txt"};
     
     for(int i = 0; i < 7; i++){
@@ -33,7 +34,7 @@ int main(int argc,char *argv[])
         printCommand(cmd);
         printf("///////////////////\n");
     }
-    */
+    
 
     return 0;
 }

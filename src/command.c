@@ -26,6 +26,10 @@ int hasCommand(Command cmd){
 	return cmd->args->len > 0;
 }
 
+int isNumber(char number){
+	return number >= '0' && number <= '9';
+}
+
 
 /**
  * Devolve o input da ultima instrução
@@ -216,14 +220,32 @@ int filterCmd(Command comando, char* command){
 	return i;
 }*/
 
-void insertCommand(Command cmd, char* command){
-	int len = strlen(command);
-	char* newCommand = (char *)malloc(len+1);
-	strcpy(newCommand, command);
-	newCommand[0] = '$';
-	cmd->next = commandDecoder(newCommand);
+int insertCommand(Command cmd, char* command){
+	if(hasCommand(cmd)){
+		int len = strlen(command);
+		char* newCommand = (char *)malloc(len+1);
+		strcpy(newCommand, command);
+		newCommand[0] = '$';
+		cmd->next = commandDecoder(newCommand);
+		return -1;
+	}
+	else{
+		char buffer[MAX_BUFF];
+		int i = 1, j = 0;
+		skipSpaces(command, & i);
+		while(command[i] && command[i] != ' ')
+			buffer[j++] = command[i++];
+		if(j){
+			buffer[j++] = '\0';
+			char* newCommand = (char *)malloc(j);
+			strcpy(newCommand, buffer);
+			append(cmd->args, newCommand);
+			return j;
+		}
+	}
 	//free(newCommand);
-	return;
+	// não é suposto a função chegar a este ponto
+	return 0;
 }
 
 int insertInputRedirect(Command cmd, char* command){
@@ -275,7 +297,7 @@ int addToComand(Command cmd, char* arg){
 	switch(*arg){
 		case '>': return insertOutputRedirect(cmd, arg);
 		case '<': return insertInputRedirect(cmd, arg);
-		case '|': insertCommand(cmd, arg); return -1;
+		case '|': return insertCommand(cmd, arg);
 		default: return 0;
 	}
 	return 0;
@@ -286,6 +308,7 @@ void filterArgs(Command cmd, char* command, int iArgs){
 	int i = 0, toReturn = 0;
 	while(command[iArgs] != '\0'){
 		skipSpaces(command, &iArgs);
+		if(isNumber(command[iArgs])) cmd->inoffset = getInOffSet(command, &iArgs);
 		toReturn = addToComand(cmd, command + iArgs);
 		if(toReturn < 0) return;
 		if(toReturn > 0){
