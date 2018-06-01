@@ -228,8 +228,8 @@ int filterCmd(Command comando, char* command){
 int insertCommand(Command cmd, char* command){
 	if(hasCommand(cmd)){
 		int len = strlen(command);
-		char* newCommand = (char *)malloc(len+1);
-		strcpy(newCommand, command);
+		char* newCommand = (char *)malloc(len+2);
+		strcpy(newCommand+1, command);
 		newCommand[0] = '$';
 		cmd->next = commandDecoder(newCommand);
 		return -1;
@@ -314,6 +314,7 @@ void filterArgs(Command cmd, char* command, int iArgs){
 	while(command[iArgs] != '\0'){
 		skipSpaces(command, &iArgs);
 		if(isNumber(command[iArgs])) cmd->inoffset = getInOffSet(command, &iArgs);
+		else if(command[iArgs] == '|' && !hasCommand(cmd)) cmd->inoffset = 1;
 		toReturn = addToComand(cmd, command + iArgs);
 		if(toReturn < 0) return;
 		if(toReturn > 0){

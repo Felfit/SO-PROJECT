@@ -13,7 +13,7 @@
 
 int main(int argc,char *argv[])
 {
-    
+    /*
     if(argc < 2){
 		  fprintf(stderr,"Use ./program <dumb_path>\n");
 		  return -1;
@@ -24,9 +24,9 @@ int main(int argc,char *argv[])
     executeCommands(n);
     writeNotebook(n,"None.txt");
     switchNotebooks(argv[1], "None.txt");
+    */
     
     
-    /*
     char* commands[] = {"$ ls", "$| wc -l", "$2| line", "$ ls | line",
                         "$| cat >outputFile.txt", "$2| cat >>outputFile.txt", "$ cat <outputFile.txt",
                         "$ ls /bin/ | head >outputFile2.txt","$ cat <outputFile2.txt | sort -r >outputFile3.txt",
@@ -37,7 +37,7 @@ int main(int argc,char *argv[])
         Command cmd = commandDecoder(commands[i]);
         printCommand(cmd);
         printf("///////////////////\n");
-    }*/
+    }
     
 
     return 0;
