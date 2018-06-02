@@ -1,0 +1,3 @@
+Este ficheiro deve manter-se inalterado
+Porque o ficheiro de input não existe
+$| line <fich.nonexistant

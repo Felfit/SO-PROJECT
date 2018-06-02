@@ -29,16 +29,16 @@ void waitForSons(int pids[], int N){
         int status;
         waitpid(pids[i],&status,0);
         if(WIFEXITED(status) && WEXITSTATUS(status)==0)
-            printf("Notebook %d parsed\n", i);
+            printf("Notebook %d success\n", i);
         else
-            printf("Notebook %d %d failed parsing\n", i, WEXITSTATUS(status));
+            printf("Notebook %d failed\n", i);
     }
 }
 
 int main(int argc,char *argv[])
 {
     if(argc < 2){
-		  fprintf(stderr,"Use ./program <path>\n");
+		  fprintf(stderr,"No Arguments\n");
 		  return -1;
     }
     int i = 1;

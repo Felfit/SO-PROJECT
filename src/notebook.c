@@ -75,8 +75,7 @@ void executeCommands(Notebook x){
         }
         else if(input>i)
         {
-            printf("Error 1\n");
-            exit(-1);
+            exit(1);
         }
         else
         {

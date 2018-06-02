@@ -1,0 +1,3 @@
+Este ficheiro deve manter-se inalterado
+Porque o comando escreve para o stderr
+$ line <FicheirodeTeste >FicheirodeTeste
