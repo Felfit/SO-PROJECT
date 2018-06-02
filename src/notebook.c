@@ -57,38 +57,6 @@ void insertLine(Notebook x, String l){
     return;
 }
 
-static int jumpOutsAndFrees(DynArray l, int startIndex){
-    int i = startIndex,r = 0;
-    char *line;
-    while (i < l->len && !r)
-    {
-        String s = dyn_index(l,i);
-        line = s->line;
-        if (!strcmp(line, "<<<"))
-            r=1;
-        free(line);
-        free(s);
-        i++;
-    }
-    return i; 
-}
-
-void cleanOutputLines(Notebook x){
-    DynArray l = x->lines;
-    DynArray new = initDynArray();
-    int i=0,len = l->len;
-    while(i<len)
-    {
-        String s = dyn_index(l,i);
-        if(!strcmp(s->line,">>>"))
-            i=jumpOutsAndFrees(l,i);
-        else{
-            append(new,s);
-            i++;
-        }
-    }
-}
-
 /**
  * executa os comandos no notebook
 */
