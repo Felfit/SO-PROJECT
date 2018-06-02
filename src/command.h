@@ -21,5 +21,6 @@ String execute(Command comando, String input);
 Command commandDecoder(char* command);
 void printCommandArgs(Command command);
 void printCommand(Command cmd);
+void freeCommand(Command cmd);
 
 #endif

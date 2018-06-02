@@ -154,6 +154,9 @@ void redirectInputOutputCommand(Command comando){
 	}
 }
 
+/**
+ * Execuca o comando no processo filho 
+*/
 void execFilho(Command comando, int w[2], int r[2], int e[2]){
 	dup2(r[1], 1);//vai escrever para este
 	dup2(e[1], 2);//vai mandar erros para este
@@ -242,7 +245,8 @@ int getInOffSet(char* command, int *i){
 int insertCommand(Command cmd, char* command){
 	if(hasCommand(cmd)){
 		int len = strlen(command);
-		char* newCommand = (char *)malloc(len+2);
+		//char* newCommand = (char *)malloc(len+2);
+		char newCommand[len +2];
 		strcpy(newCommand+1, command);
 		newCommand[0] = '$';
 		cmd->next = commandDecoder(newCommand);
@@ -301,10 +305,14 @@ int insertOutputRedirect(Command cmd, char* command){
 	if(j) buffer[j++] = '\0';
 	char* file = malloc(j);
 	strcpy(file, buffer);
-	if(hasCommand(cmd))
+	if(hasCommand(cmd)){
+		if(!cmd->red_out) free(cmd->red_out);
 		cmd->red_out = file;
-	else 
+	}
+	else{
+		if(!cmd->red_in) free(cmd->red_in);
 		cmd->red_in = file;
+	}
 	return i;
 }
 
@@ -371,4 +379,17 @@ Command commandDecoder(char* command){
 	filterArgs(cmd, command, 1);
 	append(cmd->args, 0);
 	return cmd;
+}
+
+void freeCommand(Command cmd){
+	if(!cmd->red_in) free(cmd->red_in);
+	if(!cmd->red_out) free(cmd->red_out);
+	
+	// args é null terminated, por isso é que tem o "-1"
+	for(int i = 0; i < cmd->args->len - 1  ; i++){
+		char * arg = (char *) dyn_index(cmd->args, i);
+		free(arg);
+	}
+	//while(cmd->next != NULL) freeCommand(cmd->next);
+	free(cmd);
 }

@@ -18,6 +18,7 @@ void parseNotebook (char* docname){
     readfromFile(n,docname);
     executeCommands(n);
     writeNotebook(n, docname);
+    freeNotebook(n);
 }
 /**
  * Função que faz com que um processo pai espere pelos seus filhos
