@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -Wall -o
+CFLAGS=-g -Wall -O2 -o
 OBJECTS=*.c
 EXEC =notebook
 LYBRARIES=reader.h dynArrays.h notebook.h command.h  
