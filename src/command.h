@@ -14,7 +14,8 @@ typedef struct command
     struct command * next;
 }* Command;
 
-int getInOffSet(char* command, int *i);
+void feedInput(int fd, String input);
+int getInOffSet(char *command, int *i);
 char *getInput(int fildes);
 String execute(Command comando, String input);
 Command commandDecoder(char* command);

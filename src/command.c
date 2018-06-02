@@ -45,7 +45,7 @@ char *getInput(int fildes){
 	char buffer[MAX_BUFF], *input = NULL;
 	rd = read(fildes, buffer, MAX_BUFF - 1);
 
-	if(rd == MAX_BUFF - 1) write(3, "Input wasn't read proporly\n", 27);
+	if(rd == MAX_BUFF - 1) exit(3);
 	if(rd > 0){
 		buffer[rd - 1] = '\0';
 		input = malloc(rd + 1);
@@ -55,8 +55,16 @@ char *getInput(int fildes){
 }
 
 void feedInput(int fd, String input){
-	if(input)
-		write(fd,input->line,input->size-1);
+	if(input){
+		int writen = 0;
+		do
+		{
+			int r = write(fd,input->line+writen,input->size-1);
+			if (r<0)
+				exit(4);
+			writen+=r;
+		} while(writen < input->size-1);
+	}
 	close(fd);
 }
 
@@ -157,7 +165,8 @@ int execPipeline(Command cmd ,int w[2], int r[2], int e[2])
 	tempIn[0] = w[0];
 	tempIn[1] = w[1];	
 	while(cmd->next){
-		pipe(p);
+		if(pipe(p))
+			exit (1);
 		if(!fork()){
 			execFilho(cmd,tempIn,p,e);
 		}
@@ -183,7 +192,8 @@ int execPipeline(Command cmd ,int w[2], int r[2], int e[2])
 String execute(Command comando, String input){
 	//To Do redirecionar o stderror e matar programa se algo acontecer
 	int w[2], r[2], e[2];
-	pipe(w); pipe(r); pipe(e);
+	if(pipe(w) || pipe(r) || pipe(e))
+		exit(5);
 	int N = execPipeline(comando,w,r,e);
 	close(w[0]); //pai nao le deste pipe
 	close(e[1]); //pai nao escreve neste pipe

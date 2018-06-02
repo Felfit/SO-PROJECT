@@ -85,14 +85,27 @@ void executeCommands(Notebook x){
     }
 }
 
-void writeLine(String s, int fd){
-    write(fd,s->line,s->size);
+void writeNChars(int fd, char *s, int N)
+{
+    int x = 0;
+    do
+    {
+        int r = write(fd, s+x, N);
+        if (r<0)
+            exit (4);
+        x += r;
+    } while (x < N);
 }
 
+void writeLine(String s, int fd){
+    writeNChars(fd,s->line,s->size); 
+}
+
+
 void writeOutput(String out, int fd){
-    write(fd, "\n>>>\n", 5);
-    write(fd, out->line, out->size-1);
-    write(fd, "<<<", 3);
+    writeNChars(fd, "\n>>>\n", 5);
+    writeNChars(fd, out->line, out->size-1);
+    writeNChars(fd, "<<<", 3);
 }
 
 void writeNotebook(Notebook x,char* filepath){
@@ -110,7 +123,7 @@ void writeNotebook(Notebook x,char* filepath){
             cacc++;
         }
         if(i<length-1)
-            write(fd, "\n", 1);
+            writeNChars(fd, "\n", 1);
     }
 }
 
