@@ -9,17 +9,24 @@ typedef struct realDynArray
     int size;
 }* RealDynArray;
 
+/**
+ * Devolve o valor que está no inice igual a index
+ */ 
 void* dyn_index(DynArray a, int index){
     RealDynArray x = (RealDynArray) a;
     void* result = x->values[index];
     return result;
 }
-
+/**
+ * Insere um elemento num determinado indice
+ */ 
 void insert(DynArray a, int index, void* value){
     RealDynArray x = (RealDynArray) a;
     x->values[index] = value;
 }
-
+/**
+ * Aumenta o tamanho da estrutura
+ */ 
 static void increaseSize(DynArray a){
     RealDynArray x = (RealDynArray)a;
     void **oldvalues = x->values;
@@ -29,7 +36,9 @@ static void increaseSize(DynArray a){
     x->size = newSize;
     free (oldvalues);
 }
-
+/**
+ * Adiciona um elemento à "cauda" do array 
+ */ 
 void append(DynArray a, void* value){
     RealDynArray x = (RealDynArray)a;
     if (x->len + 1 == x->size){   
@@ -37,7 +46,9 @@ void append(DynArray a, void* value){
     }
     x->values[x->len++] = value;
 }
-
+/**
+ * Inicializa o array
+ */ 
 DynArray initDynArray(){    
     RealDynArray x = malloc(sizeof(struct realDynArray));
     x->len = 0;
