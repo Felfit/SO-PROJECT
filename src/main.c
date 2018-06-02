@@ -15,8 +15,7 @@ void parseNotebook (char* docname){
     Notebook n = initNotebook();
     readfromFile(n,docname);
     executeCommands(n);
-    writeNotebook(n, "None.txt");
-    switchNotebooks(docname, "None.txt");
+    writeNotebook(n, docname);
 }
 
 void waitForSons(int pids[], int N){
