@@ -56,3 +56,15 @@ DynArray initDynArray(){
     x->values = malloc(sizeof(void*)*x->size);
     return (DynArray)x;
 }
+
+
+/**
+ * Faz free do array dinamico
+ */
+void freeDynArray(DynArray a){
+    RealDynArray x = (RealDynArray) a; 
+    if(!x) return;
+    if(x->values)
+        free(x->values);
+    free(x);
+}

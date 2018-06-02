@@ -16,4 +16,6 @@ void insertLine(Notebook x, String l);
 void cleanOutputLines(Notebook x);
 void executeCommands(Notebook x);
 void switchNotebooks(char* old, char* new);
+void freeNotebook(Notebook nb);
+
 #endif

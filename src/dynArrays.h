@@ -12,5 +12,7 @@ DynArray initDynArray();
 void append(DynArray a, void *value);
 void insert(DynArray a, int index, void *value);
 void* dyn_index(DynArray a, int index);
+void freeDynArray(DynArray x);
+
 
 #endif

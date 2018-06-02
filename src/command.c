@@ -284,10 +284,14 @@ int insertInputRedirect(Command cmd, char* command){
 	if(j) buffer[j++] = '\0';
 	char* file = malloc(j);
 	strcpy(file, buffer);
-	if(hasCommand(cmd))
+	if(hasCommand(cmd)){
+		if(cmd->red_in) free(cmd->red_in);
 		cmd->red_in = file;
-	else 
+	}
+	else{
+		if(cmd->red_out) free(cmd->red_out);
 		cmd->red_out = file;
+	}
 	return i;
 }
 
@@ -307,10 +311,14 @@ int insertOutputRedirect(Command cmd, char* command){
 	if(j) buffer[j++] = '\0';
 	char* file = malloc(j);
 	strcpy(file, buffer);
-	if(hasCommand(cmd))
+	if(hasCommand(cmd)){
+		if(cmd->red_out) free(cmd->red_out);
 		cmd->red_out = file;
-	else 
+	}
+	else{
+		if(cmd->red_in) free(cmd->red_in);
 		cmd->red_in = file;
+	}
 	return i;
 }
 
@@ -377,4 +385,23 @@ Command commandDecoder(char* command){
 	filterArgs(cmd, command, 1);
 	append(cmd->args, 0);
 	return cmd;
+}
+
+/**
+ * Dá free de um comando
+*/
+void freeCommand(Command cmd){
+	while (cmd){
+	    Command oldcmd = cmd;
+	    if(cmd->red_in) free(cmd->red_in);
+		if(cmd->red_out) free(cmd->red_out);
+		
+		// args é null terminated, por isso é que tem o "-1"
+		for(int i = 0; i < cmd->args->len - 1  ; i++){
+			char * arg = (char *) dyn_index(cmd->args, i);
+			free(arg);
+		}
+		cmd = cmd->next;
+		free (oldcmd);    
+	}
 }
