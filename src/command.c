@@ -134,7 +134,7 @@ void closePipe(int p[2]){
 }
 
 /**
- * Redireciona o input ou output de um comando.
+ * Redireciona o input e/ou output para ficheiros
  */ 
 void redirectInputOutputCommand(Command comando){
 	if(comando->red_in){
@@ -154,6 +154,10 @@ void redirectInputOutputCommand(Command comando){
 	}
 }
 
+/**
+ * Redireciona os inputs e outputs do comando para os pipes
+ * Se o comando tiver ficheiros para input e output dá override ao pipe
+*/
 void execFilho(Command comando, int w[2], int r[2], int e[2]){
 	dup2(r[1], 1);//vai escrever para este
 	dup2(e[1], 2);//vai mandar erros para este
@@ -168,6 +172,9 @@ void execFilho(Command comando, int w[2], int r[2], int e[2]){
 
 /**
  * Recebe uma lista de comandos
+ * Executa os comandos como pipeline
+ * Alimenta o input ao primeiro comando da lista
+ * Recolhe o output do ultimo comando da lista
  * Retorna o numero de comandos executados
 */
 int execPipeline(Command cmd ,int w[2], int r[2], int e[2])
@@ -205,7 +212,6 @@ int execPipeline(Command cmd ,int w[2], int r[2], int e[2])
  * @return output do programa
 */
 String execute(Command comando, String input){
-	//To Do redirecionar o stderror e matar programa se algo acontecer
 	int w[2], r[2], e[2];
 	if(pipe(w) || pipe(r) || pipe(e))
 		exit(5);
