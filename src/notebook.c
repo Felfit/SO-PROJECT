@@ -146,3 +146,28 @@ Notebook initNotebook(){
     r->insertable=1;
     return r;
 }
+
+/**
+ * Faz free da estrutura utilizada para guardar o notebook
+*/
+
+void freeNotebook(Notebook nb){
+    if(nb->lines)
+    for(int i = 0; i < nb->lines->len; i++){
+        String str = (String) dyn_index(nb->lines, i);
+        freeString(str);
+    }
+    freeDynArray(nb->lines);
+
+    for(int i = 0; i < nb->outputs->len; i++){
+        String str = (String) dyn_index(nb->lines, i);
+        freeString(str);
+    }
+    freeDynArray(nb->outputs);
+
+    for(int i = 0; i < nb->commands->len; i++){
+        Command cmd = (Command) dyn_index(nb->commands, i);
+        freeCommand(cmd);
+    }
+    freeNotebook(nb->commands);
+}
