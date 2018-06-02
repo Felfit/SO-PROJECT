@@ -13,6 +13,9 @@
 
 #define MAX_BUFF 1024
 
+/**
+ * Atualiza i para saltar os espaços.
+ */ 
 int skipSpaces(char* string, int* i){
 	int nSpaces = 0;
 	while(string[*i] && string[*i] == ' '){ 
@@ -21,19 +24,19 @@ int skipSpaces(char* string, int* i){
 	return nSpaces;
 }
 
-
-void ifNotSpace(char* string, int* i){
-	while(string[*i] && string[*i] != ' ') (*i)++;
-}
-
+/**
+ * Verifica se já existem comandos no array
+ */ 
 int hasCommand(Command cmd){
 	return cmd->args->len > 0;
 }
 
+/**
+ * Verifica se o caracter corresponde a um numero
+ */ 
 int isNumber(char number){
 	return number >= '0' && number <= '9';
 }
-
 
 /**
  * Devolve o input da ultima instrução
@@ -53,7 +56,9 @@ char *getInput(int fildes){
 	}
 	return input;
 }
-
+/**
+ * Escreve no pipeline com o descritor fd o input.
+ */ 
 void feedInput(int fd, String input){
 	if(input){
 		int writen = 0;
@@ -67,14 +72,18 @@ void feedInput(int fd, String input){
 	}
 	close(fd);
 }
-
+/**
+ * Cria uma estrutura String
+ */ 
 String create_String_sized(int size){
 	String res = malloc(sizeof(struct string));
 	res->line = malloc(size);
 	res->size = size;
 	return res;
 }
-
+/**
+ * Coloca numa String o que será lido de um certo descritor de ficheiro, fd. Funcao usada para verificar o output de algo.
+ */ 
 String collectOutput(int fd){
 	int r; int len = 0; int size = 4096;
 	char *buff = malloc(size);
@@ -98,7 +107,9 @@ String collectOutput(int fd){
 	res->line[len] = '\0';
 	return res;
 }
-
+/**
+ * Verifica se foi encontrado algum erro no stderr e tambem nos pipelines.
+ */ 
 int checkForErrors(int stderr, int N){
 	String err = collectOutput(stderr);
 	if(err->size > 1){
@@ -114,13 +125,17 @@ int checkForErrors(int stderr, int N){
 	}
 	return 0;
 }
-
+/**
+ * Fecha um pipe
+ */ 
 void closePipe(int p[2]){
 	close(p[0]);
 	close(p[1]);
 }
 
-
+/**
+ * Redireciona o input ou output de um comando.
+ */ 
 void redirectInputOutputCommand(Command comando){
 	if(comando->red_in){
 		int in = open(comando->red_in, O_RDONLY, 0644);
@@ -206,7 +221,9 @@ String execute(Command comando, String input){
 	return output;
 }
 
-
+/**
+ * Descodifica o n-esimo comando ao qual queremos ir buscar o resultado para ser o input do camando atual.
+ */ 
 int getInOffSet(char* command, int *i){
 	int inoffset;
 	int scanned = sscanf(command + (*i), "%d|", &inoffset);
@@ -216,7 +233,12 @@ int getInOffSet(char* command, int *i){
 	}
 	else return 0;
 }
-
+/**
+ * Constroi o Command através do char* fornecido, caso exista já um comando será 
+ * chamada recursivamente a função commandDecoder neste neste novo char*,para 
+ * formar a lista ligada, para depois podermos encadear os comandos por pipeline.
+ * Caso não exista um comando o char* passa a ser o primeiro.
+ */ 
 int insertCommand(Command cmd, char* command){
 	if(hasCommand(cmd)){
 		int len = strlen(command);
@@ -242,7 +264,9 @@ int insertCommand(Command cmd, char* command){
 	}
 	return 0;
 }
-
+/**
+ * Coloca o redirecionamento do Input no Command.  
+ */
 int insertInputRedirect(Command cmd, char* command){
 	char buffer[MAX_BUFF];
 	int i, j;
@@ -261,7 +285,9 @@ int insertInputRedirect(Command cmd, char* command){
 	return i;
 }
 
-
+/**
+ * Coloca o redirecionamento do Output no Command.  
+ */ 
 int insertOutputRedirect(Command cmd, char* command){
 	cmd->append_out = command[1] == '>' ? 1 : 0;
 	char buffer[MAX_BUFF];
@@ -284,7 +310,7 @@ int insertOutputRedirect(Command cmd, char* command){
 
 /**
  * @returns 0 se a string é para ser adicionada aos argumentos do comando, 
- 	-1 se um novo comando for inserido (pipe), e >0 se houve um redericionameto, sendo
+ 	-1 se um novo comando for inserido (pipe), e >0 se houve um redirecionameto, sendo
  	este número o avanço do indice na string
  */
 
@@ -298,6 +324,9 @@ int addToComand(Command cmd, char* arg){
 	return 0;
 }
 
+/**
+ * Filtra e constroi o Command que corresponde à linha fornecida.
+ */ 
 void filterArgs(Command cmd, char* command, int iArgs){
 	char buffer[MAX_BUFF];
 	int i = 0, toReturn = 0;

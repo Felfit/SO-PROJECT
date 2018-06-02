@@ -10,14 +10,18 @@
 
 #define MAX_SIZE 4096
 
-
+/**
+ * Dá parse de um notebook
+ */ 
 void parseNotebook (char* docname){
     Notebook n = initNotebook();
     readfromFile(n,docname);
     executeCommands(n);
     writeNotebook(n, docname);
 }
-
+/**
+ * Função que faz com que um processo pai espere pelos seus filhos
+ */ 
 void waitForSons(int pids[], int N){
     int i = 0;
     for(i = 0;i < N;i++)

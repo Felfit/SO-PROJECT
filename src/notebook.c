@@ -36,7 +36,9 @@ int getNumberLines(Notebook x){
     DynArray z = x->lines;
     return z->len;
 }
-
+/**
+ * Coloca uma linha no Notebook, verificando se é um comando, se for chama commandDecoder.
+ */ 
 void insertLine(Notebook x, String l){
     if(!l)
         return;
@@ -84,7 +86,9 @@ void executeCommands(Notebook x){
         append(x->outputs,out);
     }
 }
-
+/**
+ * Escreve um determindo numero de caracteres de uma linha
+ */ 
 void writeNChars(int fd, char *s, int N)
 {
     int x = 0;
@@ -96,18 +100,24 @@ void writeNChars(int fd, char *s, int N)
         x += r;
     } while (x < N);
 }
-
+/**
+ * Escreve uma linha no ficheiro 
+ */ 
 void writeLine(String s, int fd){
     writeNChars(fd,s->line,s->size); 
 }
 
-
+/**
+ * Escreve os outputs no ficheiro
+ */ 
 void writeOutput(String out, int fd){
     writeNChars(fd, "\n>>>\n", 5);
     writeNChars(fd, out->line, out->size-1);
     writeNChars(fd, "<<<", 3);
 }
-
+/**
+ * Reescreve o ficheiro
+ */ 
 void writeNotebook(Notebook x,char* filepath){
     int fd = open(filepath,O_WRONLY | O_CREAT,0644);
     int length = getNumberLines(x);
@@ -126,7 +136,9 @@ void writeNotebook(Notebook x,char* filepath){
             writeNChars(fd, "\n", 1);
     }
 }
-
+/**
+ * Inicializa a estrutura Notebook
+ */ 
 Notebook initNotebook(){
     Notebook r = malloc(sizeof(struct notebook));
     r->lines = initDynArray();
