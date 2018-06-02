@@ -91,15 +91,20 @@ String collectOutput(int fd){
 	return res;
 }
 
-int checkForErrors(int stderr){
-	int out;
+int checkForErrors(int stderr, int N){
 	String err = collectOutput(stderr);
 	if(err->size > 1){
-		printf("%s",err->line);
 		return 1;
 	}
-	wait(&out);
-	return out;
+	int i = 0;
+	for(i = 0;i < N;i++)
+	{
+		int status;
+		wait(&status);
+		if (WIFEXITED(status) && WEXITSTATUS(status))
+			return 1;
+	}
+	return 0;
 }
 
 void closePipe(int p[2]){
@@ -140,12 +145,13 @@ void execFilho(Command comando, int w[2], int r[2], int e[2]){
 
 /**
  * Recebe uma lista de comandos
- * 
+ * Retorna o numero de comandos executados
 */
-void execPipeline(Command cmd ,int w[2], int r[2], int e[2])
+int execPipeline(Command cmd ,int w[2], int r[2], int e[2])
 {
+	int i = 1;
 	if (!cmd)
-		return;
+		return 0;
 	int p[2];
 	int tempIn[2];
 	tempIn[0] = w[0];
@@ -158,11 +164,13 @@ void execPipeline(Command cmd ,int w[2], int r[2], int e[2])
 		close(p[1]);
 		tempIn[0] = p[0];
 		tempIn[1] = p[1];	
-		cmd = cmd->next;	
+		cmd = cmd->next;
+		i++;	
 	}
 	if(!fork()){
 		execFilho(cmd,tempIn,r,e);
 	}
+	return i;
 }
 
 /**
@@ -176,14 +184,13 @@ String execute(Command comando, String input){
 	//To Do redirecionar o stderror e matar programa se algo acontecer
 	int w[2], r[2], e[2];
 	pipe(w); pipe(r); pipe(e);
-	execPipeline(comando,w,r,e);
+	int N = execPipeline(comando,w,r,e);
 	close(w[0]); //pai nao le deste pipe
 	close(e[1]); //pai nao escreve neste pipe
 	close(r[1]); //pai nao escreve neste pipe
 	feedInput(w[1],input);
-	if(checkForErrors(e[0])){
-		printf("Comando crashou");
-		exit(-1);
+	if(checkForErrors(e[0],N)){
+		exit(3);
 	}
 	String output = collectOutput(r[0]);
 	return output;
@@ -199,31 +206,6 @@ int getInOffSet(char* command, int *i){
 	}
 	else return 0;
 }
-
-/*
-int filterCmd(Command comando, char* command){
-	char buffer[MAX_BUFF];
-	int j, i = 0;
-	if(command[i] == '$') i++;
-	while(command[i] == ' ') i++;
-	if(command[i] == '|') {
-		comando->inoffset = 1;
-		i++;
-	}
-
-	else comando->inoffset = getInOffSet(command, &i);
-	
-	while(command[i] == ' ' || command[i] == '|') i++;
-	for(j = 0; command[i] != '\0' && command[i] != ' '; j++, i++){
-		buffer[j] = command[i];
-	}
-
-	buffer[j++] = '\0';
-	char *cmdString = malloc(j);
-	strcpy(cmdString, buffer);
-	append(comando->args, cmdString);
-	return i;
-}*/
 
 int insertCommand(Command cmd, char* command){
 	if(hasCommand(cmd)){
@@ -248,8 +230,6 @@ int insertCommand(Command cmd, char* command){
 			return j + nSpaces;
 		}
 	}
-	//free(newCommand);
-	// não é suposto a função chegar a este ponto
 	return 0;
 }
 
@@ -265,9 +245,9 @@ int insertInputRedirect(Command cmd, char* command){
 	char* file = malloc(j);
 	strcpy(file, buffer);
 	if(hasCommand(cmd))
-	//if(cmd->red_in) free(cmd->red_in);
 		cmd->red_in = file;
-	else cmd->red_out = file;
+	else 
+		cmd->red_out = file;
 	return i;
 }
 
@@ -286,9 +266,9 @@ int insertOutputRedirect(Command cmd, char* command){
 	char* file = malloc(j);
 	strcpy(file, buffer);
 	if(hasCommand(cmd))
-	//if(cmd->red_out) free(cmd->red_out);
 		cmd->red_out = file;
-	else cmd->red_in = file;
+	else 
+		cmd->red_in = file;
 	return i;
 }
 
@@ -352,22 +332,4 @@ Command commandDecoder(char* command){
 	filterArgs(cmd, command, 1);
 	append(cmd->args, 0);
 	return cmd;
-}
-
-void printCommandArgs(Command cmd){
-	for(int i = 0; i < cmd->args->len - 1; i++)
-      printf("Args: %s\n", (char*) dyn_index(cmd->args, i));
-}
-
-void printCommand(Command cmd){
-	printf("{\n");
-	printCommandArgs(cmd);
-	printf("red_in: %s\nred_out : %s\nappend_out : %d\ninoffset: %d\nnext: %p", 
-			cmd->red_in, cmd->red_out, cmd->append_out, cmd->inoffset, cmd->next);
-	if(cmd->next){
-		printf("\n>>>>>>>>>>>>>>>>>>>>\n");
-		printCommand(cmd->next);
-		printf("<<<<<<<<<<<<<<<<<<<<\n");
-	}
-	printf("\n}\n");
 }

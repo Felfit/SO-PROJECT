@@ -23,6 +23,7 @@ String makeStr (char* buf, int c){
   str->size = c;
   return str;
 }
+
 /**
 *Concatena duas estruturas do tipo String
 */
@@ -78,7 +79,7 @@ String filterBuffer(Notebook a, char* buff, int size, String prev){
 /**
 * Lê de um ficheiro para a estrutura Notebook as todas as linhas que não correspondem a respostas de comandos
 */
-void readfromFile(Notebook a, char *filepath){ //notebook a
+void readfromFile(Notebook a, char *filepath){
   int fd, count=0, rd=1;
   char* buff = (char*)malloc(MAX_SIZE);
     if((fd = open(filepath, O_RDONLY, 0644)) > 0){
@@ -94,7 +95,6 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
         } while(res != NULL);
 			}
     else {
-      perror("Can't open this file!");
       exit(2);
     }
   close(fd);
