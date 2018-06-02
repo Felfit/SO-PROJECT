@@ -17,6 +17,9 @@ typedef struct notebook
     int insertable;
 }* Notebook;
 
+/**
+ *Liberta da memoria a estrutura String 
+ */
 void freeString(String c)
 {
     if (!c)
@@ -26,6 +29,9 @@ void freeString(String c)
     return;
 }
 
+/**
+ * Devolve o numero de linhas do Notebook
+ */ 
 int getNumberLines(Notebook x){
     DynArray z = x->lines;
     return z->len;
