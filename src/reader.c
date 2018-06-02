@@ -11,6 +11,10 @@
 
 #define MAX_SIZE 4096
 
+/**
+ *@param c, tamanho da string
+ *Cria uma estrutura String 
+ */
 String makeStr (char* buf, int c){
   String str = malloc(sizeof( struct string));
   str->line = (char*)malloc(c);
@@ -19,7 +23,9 @@ String makeStr (char* buf, int c){
   str->size = c;
   return str;
 }
-
+/**
+*Concatena duas estruturas do tipo String
+*/
 void stringPrepend(String s1, String s2){
   s1->size += s2->size;
   char* n = strcat(s2->line,s1->line);
@@ -27,6 +33,12 @@ void stringPrepend(String s1, String s2){
   s1->line = n;
 }
 
+/**
+ * @param buff, contém todas as strings do ficheiro
+ * @param size, quantos caracteres leu
+ * @param prev, string anterior, caso o buffer tenha cortado uma linha a meio ao chegar à sua capacidade máxima
+ * Filtra o buffer recebido, retirando as respostas, e coloca uma a uma as linhas pretendidas na estrutura notebook
+ */
 String filterBuffer(Notebook a, char* buff, int size, String prev){
   int i=0,count=0;
   while(i < size){
@@ -63,7 +75,9 @@ String filterBuffer(Notebook a, char* buff, int size, String prev){
   return NULL;
 }
 
-
+/**
+* Lê de um ficheiro para a estrutura Notebook as todas as linhas que não correspondem a respostas de comandos
+*/
 void readfromFile(Notebook a, char *filepath){ //notebook a
   int fd, count=0, rd=1;
   char* buff = (char*)malloc(MAX_SIZE);
