@@ -62,7 +62,6 @@ DynArray initDynArray(){
  */
 void freeDynArray(DynArray a){
     if(!a) return;
-    RealDynArray x = (RealDynArray)a;
-    free(x->values);
-    free(x);
+    free(a->values);
+    free(a);
 }

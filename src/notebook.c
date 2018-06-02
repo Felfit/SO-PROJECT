@@ -169,5 +169,5 @@ void freeNotebook(Notebook nb){
         Command cmd = (Command) dyn_index(nb->commands, i);
         freeCommand(cmd);
     }
-    freeNotebook(nb->commands);
+    freeDynArray(nb->commands);
 }

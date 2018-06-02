@@ -388,15 +388,21 @@ Command commandDecoder(char* command){
 	return cmd;
 }
 
+/**
+ * Dá free de um comando
+*/
 void freeCommand(Command cmd){
-	if(!cmd->red_in) free(cmd->red_in);
-	if(!cmd->red_out) free(cmd->red_out);
-	
-	// args é null terminated, por isso é que tem o "-1"
-	for(int i = 0; i < cmd->args->len - 1  ; i++){
-		char * arg = (char *) dyn_index(cmd->args, i);
-		free(arg);
+	while (cmd){
+	    Command oldcmd = cmd;
+	    if(!cmd->red_in) free(cmd->red_in);
+		if(!cmd->red_out) free(cmd->red_out);
+		
+		// args é null terminated, por isso é que tem o "-1"
+		for(int i = 0; i < cmd->args->len - 1  ; i++){
+			char * arg = (char *) dyn_index(cmd->args, i);
+			free(arg);
+		}
+		cmd = cmd->next;
+		free (oldcmd);    
 	}
-	//while(cmd->next != NULL) freeCommand(cmd->next);
-	free(cmd);
 }
