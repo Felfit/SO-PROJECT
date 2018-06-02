@@ -1,0 +1,3 @@
+Este ficheiro deve manter-se inalterado
+Porque o comando intermédio à pipeline escreve para o stderr
+$ ls | line <fich >fich| sort
