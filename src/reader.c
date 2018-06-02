@@ -79,6 +79,9 @@ void readfromFile(Notebook a, char *filepath){ //notebook a
           count = 0;
         } while(res != NULL);
 			}
-    else perror("Can't open this file!");
+    else {
+      perror("Can't open this file!");
+      exit(2);
+    }
   close(fd);
 }

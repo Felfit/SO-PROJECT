@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
-
+#include <sys/wait.h>
 #include "reader.h"
 #include "notebook.h"
 #include "command.h"
@@ -11,34 +11,48 @@
 #define MAX_SIZE 4096
 
 
+void parseNotebook (char* docname){
+    Notebook n = initNotebook();
+    readfromFile(n,docname);
+    executeCommands(n);
+    writeNotebook(n, "None.txt");
+    switchNotebooks(docname, "None.txt");
+}
+
+void waitForSons(int pids[], int N){
+    int i = 0;
+    for(i = 0;i < N;i++)
+    {
+        int status;
+        waitpid(pids[i],&status,0);
+        if(WIFEXITED(status) && WEXITSTATUS(status)==0)
+            printf("Notebook %d parsed\n", i);
+        else
+            printf("Notebook %d %d failed parsing\n", i, WEXITSTATUS(status));
+    }
+}
+
 int main(int argc,char *argv[])
 {
-    /*
     if(argc < 2){
-		  fprintf(stderr,"Use ./program <dumb_path>\n");
+		  fprintf(stderr,"Use ./program <path>\n");
 		  return -1;
-	  }
-  
-    Notebook n = initNotebook();
-    readfromFile(n,argv[1]);
-    executeCommands(n);
-    writeNotebook(n,"None.txt");
-    switchNotebooks(argv[1], "None.txt");
-    */
-    
-    
-    char* commands[] = {"$ ls", "$| wc -l", "$2| line", "$ ls | line",
-                        "$| cat >outputFile.txt", "$2| cat >>outputFile.txt", "$ cat <outputFile.txt",
-                        "$ ls /bin/ | head >outputFile2.txt","$ cat <outputFile2.txt | sort -r >outputFile3.txt",
-                        "$ cat <outputFile3.txt"};
-    
-    for(int i = 0; i < 10; i++){
-        printf("/////Case - %s/////\n", commands[i]);
-        Command cmd = commandDecoder(commands[i]);
-        printCommand(cmd);
-        printf("///////////////////\n");
     }
-    
-
+    int i = 1;
+    int pid;
+    int pids[argc-1];
+    do
+    {
+        pid = fork();
+        if(!pid){
+            parseNotebook(argv[i]);
+        }
+        else
+            pids[i-1]=pid;
+        i++;
+    } while(i<argc && pid);
+    if(pid){
+        waitForSons(pids,argc-1);
+    }
     return 0;
 }
