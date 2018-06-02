@@ -1,0 +1,8 @@
+$ ls >o1.txt
+$ head <o1.txt >o.txt
+$ cat <o.txt
+$ cat >o2.txt <o.txt
+$ cat >>o.txt <o2.txt
+$ cat <o.txt
+$ rm o.txt o2.txt
+$ rm o1.txt
